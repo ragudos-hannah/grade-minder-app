@@ -1,31 +1,22 @@
 package com.example.gradetrackerapp.homepage;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Layout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.gradetrackerapp.R;
 import com.example.gradetrackerapp.course.Course;
+import com.example.gradetrackerapp.database.AppDatabase;
 import com.example.gradetrackerapp.grades.GradeActivity;
 import com.google.android.material.navigation.NavigationView;
 
@@ -34,12 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class HomepageActivity extends AppCompatActivity {
-    List<Course> courses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +48,6 @@ public class HomepageActivity extends AppCompatActivity {
 
         Button addCourseButton = findViewById(R.id.addCourseButton);
         addCourseButton.setOnClickListener(v -> showAddCourseDialog());
-
-
-        /*
-        Button gradeButton = findViewById(R.id.goToGradeButton);
-        gradeButton.setOnClickListener(v -> {
-            Intent gradeIntent = new Intent(HomepageActivity.this, GradeActivity.class);
-            startActivity(gradeIntent);
-        });
-
-         */
     } // end of onCreate
 
     private void showAddCourseDialog() {
@@ -92,7 +70,7 @@ public class HomepageActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(courseCode) && !TextUtils.isEmpty(courseName) && !TextUtils.isEmpty(professor)) {
                 Course newCourse = new Course(courseCode, courseName, professor);
-                courses.add(newCourse);
+                saveCourseToDatabase(newCourse);
                 updateNavigationDrawerMenu();
             } else {
                 Toast.makeText(HomepageActivity.this, "Invalid input. Course not added.", Toast.LENGTH_SHORT).show();
@@ -112,12 +90,27 @@ public class HomepageActivity extends AppCompatActivity {
         Menu menu = navigationView.getMenu();
         menu.clear();
 
-        for (Course course : courses) {
-            int itemId = generateCourseMenuItemId(course);
+        loadCoursesFromDatabase(menu);
+    } // end of updateNavigationDrawerMenu
 
-            menu.add(R.id.group_courses, itemId, Menu.NONE, course.getCourseName());
-        }
-    }
+    private void loadCoursesFromDatabase(Menu menu) {
+        new Thread(() -> {
+            List<Course> coursesFromDatabase = AppDatabase.getDbInstance(getApplicationContext()).courseDao().getAllCourses();
+
+            runOnUiThread(() -> {
+                for (Course course : coursesFromDatabase) {
+                    int itemId = generateCourseMenuItemId(course);
+                    menu.add(R.id.group_courses, itemId, Menu.NONE, course.getCourseName());
+                }
+            });
+        }).start();
+    } // end of loadCoursesFromDatabase
+
+    private void saveCourseToDatabase(Course course) {
+        new Thread(() -> {
+            AppDatabase.getDbInstance(getApplicationContext()).courseDao().insert(course);
+        }).start();
+    } // end of saveCourseToDatabase
 
     private int generateCourseMenuItemId(Course course) {
         String uniqueString = course.getCourseCode() + course.getCourseName() + course.getProfessor();
@@ -126,9 +119,9 @@ public class HomepageActivity extends AppCompatActivity {
 
     private void openGradeActivity(Course course) {
         Intent gradeIntent = new Intent(HomepageActivity.this, GradeActivity.class);
-        gradeIntent.putExtra("courseCode", course.courseCode);
-        gradeIntent.putExtra("courseName", course.courseName);
-        gradeIntent.putExtra("professor", course.professor);
+        gradeIntent.putExtra("courseCode", course.getCourseCode());
+        gradeIntent.putExtra("courseName", course.getCourseName());
+        gradeIntent.putExtra("professor", course.getProfessor());
         startActivity(gradeIntent);
     } // end of openGradeActivity
 

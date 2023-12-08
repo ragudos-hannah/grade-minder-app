@@ -1,20 +1,36 @@
 package com.example.gradetrackerapp.course;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+import com.example.gradetrackerapp.database.GradeCategoryConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(tableName = "courses")
 public class Course {
-    public String courseCode;
-    public String courseName;
-    public String professor;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
 
-    public Categories categories;
+    private String courseCode;
+    private String courseName;
+    private String professor;
+
+    @TypeConverters({GradeCategoryConverter.class})
+    private List<GradeCategory> gradeCategories;
 
     public Course(String courseCode, String courseName, String professor) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.professor = professor;
+        this.gradeCategories = new ArrayList<>();
     } // end of constructor
+
+    public int getId() {
+        return id;
+    }
 
     public String getCourseCode() {
         return courseCode;
@@ -28,42 +44,31 @@ public class Course {
         return professor;
     }
 
-    public static class Categories {
-        public Category classStanding;
-        public Category exam;
-    } // end of Categories class
+    public List<GradeCategory> getGradeCategories() {
+        return gradeCategories;
+    }
 
-    public static class Category {
-        public Term prelims;
-        public Term midterms;
-        public Term finals;
-    } // end of Category class
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public static class Term {
-        public double termGrade = 0;
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
 
-        public List<Activity> activities = new ArrayList<>();
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
 
-        public void addActivity(String activityName, int activityScore) {
-            activities.add(new Activity(activityName, activityScore));
-        } // end of addActivity
+    public void setProfessor(String professor) {
+        this.professor = professor;
+    }
 
-        public void setTermGrade(double termGrade) {
-            this.termGrade = termGrade;
-        } // end of setTermGrade
+    public void setGradeCategories(List<GradeCategory> gradeCategories) {
+        this.gradeCategories = gradeCategories;
+    }
 
-        public List<Activity> getActivities() {
-            return activities;
-        } // end of getActivities
-    } // end of Term class
-
-    public static class Activity {
-        public String activityName;
-        public int activityScore;
-
-        public Activity(String activityName, int activityScore) {
-            this.activityName = activityName;
-            this.activityScore = activityScore;
-        } // end of constructor
-    } // end of Activity class
+    public void addGradeCategory(GradeCategory category) {
+        gradeCategories.add(category);
+    }
 } // end of Course class
