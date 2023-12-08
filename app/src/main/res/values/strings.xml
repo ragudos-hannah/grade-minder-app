@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Grade Tracker App</string>
+
+    <!-- Login Activity -->
+    <string name="login_heading">Login</string>
+
+    <!-- Registration Activity -->
+    <string name="register_heading">Register</string>
+    <string name="name_hint">Name</string>
+    <string name="surname_hint">Surname</string>
+    <string name="register_button">Register</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+</resources>
