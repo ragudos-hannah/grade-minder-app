@@ -78,6 +78,13 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
         } else {
             showToast("Failed to remove data file");
         }
+
+        File dbFile = getDatabasePath("course-database");
+        if (dbFile.delete()) {
+            showToast("Database file removed successfully");
+        } else {
+            showToast("Failed to remove database file");
+        }
     } // end of removeDateFile
 
     private void showToast(String message) {

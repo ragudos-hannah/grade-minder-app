@@ -1,4 +1,4 @@
-package com.example.gradetrackerapp.grades;
+package com.example.gradetrackerapp.grades.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,8 +9,19 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.gradetrackerapp.R;
+import com.example.gradetrackerapp.data.category.Category;
+import com.example.gradetrackerapp.data.course.Course;
+
+import java.util.List;
 
 public class FinalsFragment extends Fragment {
+    private List<Category> categories;
+    private Course course;
+
+    public FinalsFragment(List<Category> categories, Course course) {
+        this.categories = categories;
+        this.course = course;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -19,6 +30,11 @@ public class FinalsFragment extends Fragment {
         TextView heading = view.findViewById(R.id.heading);
         String newHeading = "Finals";
         heading.setText(newHeading);
+
+        TextView courseNameTest = view.findViewById(R.id.courseNameTest);
+        String courseNameTestHeading = course.courseName;
+        courseNameTest.setText(courseNameTestHeading);
+
 
         return view;
     } // end of onCreateView

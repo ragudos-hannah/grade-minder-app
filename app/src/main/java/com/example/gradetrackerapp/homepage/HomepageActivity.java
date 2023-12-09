@@ -2,9 +2,9 @@ package com.example.gradetrackerapp.homepage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,12 +13,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gradetrackerapp.R;
-import com.example.gradetrackerapp.course.Course;
-import com.example.gradetrackerapp.database.AppDatabase;
+import com.example.gradetrackerapp.data.course.Course;
+import com.example.gradetrackerapp.data.course.CourseAdapter;
 import com.example.gradetrackerapp.grades.GradeActivity;
-import com.google.android.material.navigation.NavigationView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,27 +30,47 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 public class HomepageActivity extends AppCompatActivity {
+    private HomepageViewModel homepageViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
 
+        // initialize view model
+        homepageViewModel = new ViewModelProvider(this).get(HomepageViewModel.class);
+
+        // observe changes in the list of courses
+        homepageViewModel.getCoursesLiveData().observe(this, courses -> {
+            updateRecyclerView(courses);
+        });
+
         // set name in the homepage
         TextView nameTextView = findViewById(R.id.nameTextView);
         String name = readInfo();
         nameTextView.setText(name);
 
-        // set name info in the nav header
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        View navigationHeader = navigationView.getHeaderView(0);
-        TextView nameNavigationHeader = navigationHeader.findViewById(R.id.nameInformation);
-        nameNavigationHeader.setText(name);
-
+        TextView nameInformationTextView = findViewById(R.id.nameInformation);
+        nameInformationTextView.setText(name);
 
         Button addCourseButton = findViewById(R.id.addCourseButton);
         addCourseButton.setOnClickListener(v -> showAddCourseDialog());
     } // end of onCreate
+
+    private void updateRecyclerView(List<Course> courses) {
+        CourseAdapter courseAdapter = new CourseAdapter(getApplicationContext());
+        courseAdapter.setCoursesList(courses);
+
+        courseAdapter.setOnItemClickListener(course -> {
+            Intent intent = new Intent(HomepageActivity.this, GradeActivity.class);
+            intent.putExtra("courseId", course.courseId);
+            startActivity(intent);
+        });
+
+        RecyclerView recyclerView = findViewById(R.id.coursesRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(courseAdapter);
+    } // end of updateRecyclerView
 
     private void showAddCourseDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -66,12 +88,16 @@ public class HomepageActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", (dialogInterface, id) -> {
             String courseCode = courseCodeInput.getText().toString().trim();
             String courseName = courseNameInput.getText().toString().trim();
-            String professor = professorInput.getText().toString().trim();
+            String courseInstructor = professorInput.getText().toString().trim();
 
-            if (!TextUtils.isEmpty(courseCode) && !TextUtils.isEmpty(courseName) && !TextUtils.isEmpty(professor)) {
-                Course newCourse = new Course(courseCode, courseName, professor);
-                saveCourseToDatabase(newCourse);
-                updateNavigationDrawerMenu();
+            if (!TextUtils.isEmpty(courseCode) && !TextUtils.isEmpty(courseName) && !TextUtils.isEmpty(courseInstructor)) {
+                Course newCourse = new Course();
+                newCourse.courseCode = courseCode;
+                newCourse.courseName = courseName;
+                newCourse.courseInstructor = courseInstructor;
+
+                // Insert the new course using the ViewModel
+                homepageViewModel.insertCourse(newCourse);
             } else {
                 Toast.makeText(HomepageActivity.this, "Invalid input. Course not added.", Toast.LENGTH_SHORT).show();
             }
@@ -83,47 +109,6 @@ public class HomepageActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     } // end of showAddCourseDialog
-
-    private void updateNavigationDrawerMenu() {
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-
-        Menu menu = navigationView.getMenu();
-        menu.clear();
-
-        loadCoursesFromDatabase(menu);
-    } // end of updateNavigationDrawerMenu
-
-    private void loadCoursesFromDatabase(Menu menu) {
-        new Thread(() -> {
-            List<Course> coursesFromDatabase = AppDatabase.getDbInstance(getApplicationContext()).courseDao().getAllCourses();
-
-            runOnUiThread(() -> {
-                for (Course course : coursesFromDatabase) {
-                    int itemId = generateCourseMenuItemId(course);
-                    menu.add(R.id.group_courses, itemId, Menu.NONE, course.getCourseName());
-                }
-            });
-        }).start();
-    } // end of loadCoursesFromDatabase
-
-    private void saveCourseToDatabase(Course course) {
-        new Thread(() -> {
-            AppDatabase.getDbInstance(getApplicationContext()).courseDao().insert(course);
-        }).start();
-    } // end of saveCourseToDatabase
-
-    private int generateCourseMenuItemId(Course course) {
-        String uniqueString = course.getCourseCode() + course.getCourseName() + course.getProfessor();
-        return uniqueString.hashCode();
-    } // end of generateCourseMenuItemId
-
-    private void openGradeActivity(Course course) {
-        Intent gradeIntent = new Intent(HomepageActivity.this, GradeActivity.class);
-        gradeIntent.putExtra("courseCode", course.getCourseCode());
-        gradeIntent.putExtra("courseName", course.getCourseName());
-        gradeIntent.putExtra("professor", course.getProfessor());
-        startActivity(gradeIntent);
-    } // end of openGradeActivity
 
     private String readInfo() {
         File file = new File(getFilesDir(), "register_data/data.txt");
