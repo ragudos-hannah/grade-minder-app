@@ -14,7 +14,7 @@ public class Course {
     public String courseName;
     public String courseCode;
     public String courseInstructor;
-
+    public int courseGrade;
     public int examWeight;
     public int classStandingWeight;
 
@@ -22,6 +22,7 @@ public class Course {
     //public List<Term> terms;
 
     public Course() {
+        courseGrade = 0;
         examWeight = 50;
         classStandingWeight = 50;
     } // end of constructor

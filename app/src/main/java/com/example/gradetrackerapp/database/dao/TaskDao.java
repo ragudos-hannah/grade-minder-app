@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.gradetrackerapp.data.ref.Task;
 import com.example.gradetrackerapp.data.ref.Term;
@@ -20,6 +21,9 @@ public interface TaskDao {
 
     @Delete
     void deleteTask(Task task);
+
+    @Update
+    void updateTask(Task task);
 
     @Query("SELECT * FROM tasks")
     LiveData<List<Task>> getAllTasks();

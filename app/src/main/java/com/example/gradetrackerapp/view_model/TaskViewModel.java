@@ -27,6 +27,10 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository.deleteTask(task);
     } // end of deleteTask
 
+    public void updateTask(Task task) {
+        taskRepository.updateTask(task, getApplication());
+    } // end of updateTask
+
     public LiveData<List<Task>> getTasksForTerm(int termId) {
         return taskRepository.getTasksForTerm(termId);
     } // end of getTasksForTerm

@@ -28,6 +28,10 @@ public class TaskRepository {
         new DeleteTaskAsyncTask(taskDao).execute(task);
     } // end of deleteTask
 
+    public void updateTask(Task task, Application application) {
+        new UpdateTaskAsyncTask(taskDao, application).execute(task);
+    } // end of updateTask
+
     public LiveData<List<Task>> getTasksForTerm(int termId) {
         return taskDao.getTasksForTerm(termId);
     } // end of getTasksForTerm
@@ -46,7 +50,7 @@ public class TaskRepository {
             AppDatabase.getInstance(application).insertTask(tasks[0]);
 
             return null;
-        }
+        } // end of doInBackground
     } // end of InsertTaskAsyncTask
 
     private static class DeleteTaskAsyncTask extends AsyncTask<Task, Void, Void> {
@@ -61,6 +65,22 @@ public class TaskRepository {
             taskDao.deleteTask(tasks[0]);
 
             return null;
-        }
-    }
+        } // end of doInBackground
+    } // end of DeleteTaskAsyncTask
+
+    private static class UpdateTaskAsyncTask extends AsyncTask<Task, Void, Void> {
+        private TaskDao taskDao;
+        private Application application;
+
+        private UpdateTaskAsyncTask(TaskDao taskDao, Application application) {
+            this.taskDao = taskDao;
+            this.application = application;
+        } // end of constructor
+
+        @Override
+        protected Void doInBackground(Task... tasks) {
+            AppDatabase.getInstance(application).updateTask(tasks[0]);
+            return null;
+        } // end of doInBackground
+    } // end of UpdateTaskAsyncTask
 } // end of TaskRepository class

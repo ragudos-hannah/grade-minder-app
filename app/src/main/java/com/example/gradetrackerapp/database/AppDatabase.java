@@ -39,30 +39,28 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public void insertCourse(final Course course) {
         if (INSTANCE != null) {
-            INSTANCE.runInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    int courseId = (int) INSTANCE.courseDao().insertCourseAndGetId(course);
+            INSTANCE.runInTransaction(() -> {
+                int courseId = (int) INSTANCE.courseDao().insertCourseAndGetId(course);
 
-                    List<Term> defaultTerms = Arrays.asList(
-                            new Term(courseId, "Prelims"),
-                            new Term(courseId, "Midterms"),
-                            new Term(courseId, "Finals")
-                    );
-                    courseDao().insertTerms(defaultTerms);
-                }
+                List<Term> defaultTerms = Arrays.asList(
+                        new Term(courseId, "Prelims"),
+                        new Term(courseId, "Midterms"),
+                        new Term(courseId, "Finals")
+                );
+                courseDao().insertTerms(defaultTerms);
             });
         }
     } // end of insertCourse
 
     public void insertTask(final Task task) {
         if (INSTANCE != null) {
-            INSTANCE.runInTransaction(new Runnable() {
-                @Override
-                public void run() {
-                    taskDao().insertTask(task);
-                }
-            });
+            INSTANCE.runInTransaction(() -> taskDao().insertTask(task));
         }
     } // end of insertTask
+
+    public void updateTask(final Task task) {
+        if (INSTANCE != null) {
+            INSTANCE.runInTransaction(() -> taskDao().updateTask(task));
+        }
+    } // end of updateTask
 } // end of AppDatabase

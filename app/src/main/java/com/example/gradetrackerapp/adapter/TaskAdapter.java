@@ -9,6 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.gradetrackerapp.R;
+import com.example.gradetrackerapp.callback.OnDeleteClickListener;
+import com.example.gradetrackerapp.callback.OnEditClickListener;
+import com.example.gradetrackerapp.callback.OnItemClickListener;
 import com.example.gradetrackerapp.data.ref.Task;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,9 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> tasks;
     private final LayoutInflater inflater;
-    private OnItemClickListener listener;
-    private OnDeleteClickListener deleteClickListener;
+    private OnItemClickListener<Task> listener;
+    private OnDeleteClickListener<Task> deleteClickListener;
+    private OnEditClickListener<Task> editClickListener;
 
     public TaskAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -47,21 +51,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     } // end of getItemCount
 
-    public interface OnItemClickListener {
-        void onItemClick(Task task);
-    } // end of OnItemClickListener
-
-    public interface OnDeleteClickListener {
-        void onDeleteClick(Task task);
-    } // end of OnDeleteClickListener
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener<Task> listener) {
         this.listener = listener;
     } // end of setOnItemClickListener
 
-    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+    public void setOnDeleteClickListener(OnDeleteClickListener<Task> listener) {
         this.deleteClickListener = listener;
     } // end of setOnDeleteClickListener
+
+    public void setOnEditClickListener(OnEditClickListener<Task> listener) {
+        this.editClickListener = listener;
+    } // end of setOnEditClickListener
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
         private TextView taskNameTextView;
@@ -70,7 +70,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private ImageButton editButton;
         private ImageButton deleteButton;
 
-        TaskViewHolder(@NonNull View itemView, OnItemClickListener listener) {
+        TaskViewHolder(@NonNull View itemView, OnItemClickListener<Task> listener) {
             super(itemView);
             taskNameTextView = itemView.findViewById(R.id.taskNameTextView);
             scoreTextView = itemView.findViewById(R.id.scoreTextView);
@@ -93,19 +93,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     deleteClickListener.onDeleteClick(tasks.get(position));
                 }
             });
+
+            editButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && editClickListener != null) {
+                    editClickListener.onEditClick(tasks.get(position));
+                }
+            });
         } // end of constructor
 
         void bind(Task task) {
             taskNameTextView.setText(task.taskName);
             scoreTextView.setText(String.valueOf(task.score));
             totalScoreTextView.setText(String.valueOf(task.totalScore));
-
-            deleteButton.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && deleteClickListener != null) {
-                    deleteClickListener.onDeleteClick(tasks.get(position));
-                }
-            });
         } // end of bind
     } // end of TaskViewHolder class
 } // end of TaskAdapter

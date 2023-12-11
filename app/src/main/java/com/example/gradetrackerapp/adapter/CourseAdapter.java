@@ -8,14 +8,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.gradetrackerapp.R;
+import com.example.gradetrackerapp.callback.OnItemClickListener;
 import com.example.gradetrackerapp.data.ref.Course;
+import com.example.gradetrackerapp.data.ref.Task;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
     private List<Course> courses;
     private final LayoutInflater inflater;
-    private OnItemClickListener listener;
+    private OnItemClickListener<Course> listener;
 
     public CourseAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -45,11 +48,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         return courses.size();
     } // end of getItemCount
 
-    public interface OnItemClickListener {
-        void onItemClick(Course course);
-    } // end of OnItemClickListener
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener<Course> listener) {
         this.listener = listener;
     } // end of setOnItemClickListener
 
@@ -58,7 +57,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         private final TextView courseCodeTextView;
         private final TextView courseInstructorTextView;
 
-        CourseViewHolder(@NonNull View itemView, OnItemClickListener listener) {
+        CourseViewHolder(@NonNull View itemView, OnItemClickListener<Course> listener) {
             super(itemView);
             courseNameTextView = itemView.findViewById(R.id.courseNameTextView);
             courseCodeTextView = itemView.findViewById(R.id.courseCodeTextView);

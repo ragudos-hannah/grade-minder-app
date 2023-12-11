@@ -54,28 +54,26 @@ public class PrelimsFragment extends Fragment {
         // observe changes in the list of courses
         taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), this::updateRecyclerView);
 
+        // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
-        addTaskButton.setOnClickListener(v -> showAddTaskDialog());
+        addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
 
         return view;
     } // end of onCreateView
 
     private void updateRecyclerView(List<Task> tasks) {
         TaskAdapter taskAdapter = new TaskAdapter(requireContext());
-        taskAdapter.setOnDeleteClickListener(new TaskAdapter.OnDeleteClickListener() {
-            @Override
-            public void onDeleteClick(Task task) {
-                taskViewModel.deleteTask(task);
-            }
-        });
+        taskAdapter.setOnDeleteClickListener(task -> taskViewModel.deleteTask(task));
         taskAdapter.setTasks(tasks);
+
+        taskAdapter.setOnEditClickListener(task -> showAddOrEditTaskDialog(task));
 
         RecyclerView recyclerView = getView().findViewById(R.id.taskRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(taskAdapter);
     } // end of updateRecyclerView
 
-    private void showAddTaskDialog() {
+    private void showAddOrEditTaskDialog(Task existingTask) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_edit_task, null);
         builder.setView(dialogView);
@@ -86,9 +84,15 @@ public class PrelimsFragment extends Fragment {
         Button cancelBTN = dialogView.findViewById(R.id.cancelBTN);
         Button checkBTN = dialogView.findViewById(R.id.checkBTN);
 
+        if (existingTask != null) {
+            taskNameET.setText(existingTask.taskName);
+            scoreET.setText(String.valueOf(existingTask.score));
+            totalScoreET.setText(String.valueOf(existingTask.totalScore));
+        }
+
         AlertDialog dialog = builder.create();
 
-        cancelBTN.setOnClickListener(view -> builder.create().dismiss());
+        cancelBTN.setOnClickListener(view -> dialog.dismiss());
 
         checkBTN.setOnClickListener(view -> {
             String taskName = taskNameET.getText().toString().trim();
@@ -105,7 +109,12 @@ public class PrelimsFragment extends Fragment {
                 newTask.termId = term.termId;
 
                 // Insert the new task using the ViewModel
-                taskViewModel.insertTask(newTask);
+                if (existingTask != null) {
+                    newTask.taskId = existingTask.taskId;
+                    taskViewModel.updateTask(newTask);
+                } else {
+                    taskViewModel.insertTask(newTask);
+                }
             } else {
                 Toast.makeText(getContext(), "Invalid input. Task not added.", Toast.LENGTH_SHORT).show();
             }
