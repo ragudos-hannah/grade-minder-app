@@ -2,24 +2,21 @@ package com.example.gradetrackerapp.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
-import com.example.gradetrackerapp.data.term.Term;
+import com.example.gradetrackerapp.data.ref.Course;
+import com.example.gradetrackerapp.data.ref.Task;
 
 import java.util.List;
 
 @Dao
 public interface TermDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertTerm(Term term);
+    @Transaction
+    @Query("SELECT courses.* FROM courses INNER JOIN terms ON courses.courseId = terms.courseId WHERE terms.termId = :termId")
+    LiveData<Course> getCourseForTerm(int termId);
 
     @Transaction
-    @Insert
-    void insertDefaultTerms(List<Term> defaultTerms);
-
-    @Query("SELECT * FROM term_table WHERE categoryId = :categoryId")
-    LiveData<List<Term>> getTermsByCategory(int categoryId);
+    @Query("SELECT * FROM tasks WHERE termId = :termId")
+    LiveData<List<Task>> getTasksForTerm(int termId);
 } // end of TermDao interface

@@ -10,11 +10,11 @@
     <color name="bright_red">#FF0000</color>
 
     <!-- Chosen Color Palette -->
-    <color name="yellow">#EEC643</color>
-    <color name="black">#141414</color>
-    <color name="snow_white">#EEF0F2</color>
-    <color name="blue">#0D21A1</color>
-    <color name="dark_blue">#011638</color>
+    <color name="black">#FF000000</color>
+    <color name="snow_white">#FFFFFFFF</color>
+    <color name="green">#25BF55</color>
     <color name="red">#F87575</color>
-    <color name="green">#20BF55</color>
+    <color name="blue">#0F27BD</color>
+    <color name="yellow">#FFDC6C</color>
+    <color name="gray">#ECECEC</color>
 </resources>

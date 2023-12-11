@@ -6,11 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.gradetrackerapp.data.category.Category;
-import com.example.gradetrackerapp.data.course.Course;
-import com.example.gradetrackerapp.data.task.Task;
-import com.example.gradetrackerapp.data.term.Term;
-import com.example.gradetrackerapp.database.dao.CategoryDao;
+import com.example.gradetrackerapp.data.ref.Course;
+import com.example.gradetrackerapp.data.ref.Exam;
+import com.example.gradetrackerapp.data.ref.Task;
+import com.example.gradetrackerapp.data.ref.Term;
 import com.example.gradetrackerapp.database.dao.CourseDao;
 import com.example.gradetrackerapp.database.dao.TaskDao;
 import com.example.gradetrackerapp.database.dao.TermDao;
@@ -18,41 +17,52 @@ import com.example.gradetrackerapp.database.dao.TermDao;
 import java.util.Arrays;
 import java.util.List;
 
-@Database(entities = {Course.class, Category.class, Term.class, Task.class}, version = 1, exportSchema = false)
+@Database(entities = {Course.class, Term.class, Task.class, Exam.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract CourseDao courseDao();
-    public abstract CategoryDao categoryDao();
     public abstract TermDao termDao();
     public abstract TaskDao taskDao();
 
-    private static final List<Term> DEFAULT_TERMS = Arrays.asList(
-            new Term(0, "Prelims"),
-            new Term(0, "Midterms"),
-            new Term(0, "Finals")
-    );
+    private static AppDatabase INSTANCE;
 
-    public static void initializeDefaultTerms(Context context, int courseId) {
-        AppDatabase database = getInstance(context);
-        TermDao termDao = database.termDao();
-        for (Term term : DEFAULT_TERMS) {
-            term.categoryId = courseId;
-            termDao.insertTerm(term);
-        }
-    }
-
-    private static volatile AppDatabase INSTANCE;
-
-    public static AppDatabase getInstance(Context context) {
+    public static synchronized AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "course-database")
-                            .fallbackToDestructiveMigration()
-                            .build();
-                }
-            }
+            INSTANCE = Room.databaseBuilder(
+                    context.getApplicationContext(),
+                    AppDatabase.class,
+                    "course-database")
+                    .fallbackToDestructiveMigration()
+                    .build();
         }
         return INSTANCE;
     } // end of getInstance
-} // end of AppDatabase class
+
+    public void insertCourse(final Course course) {
+        if (INSTANCE != null) {
+            INSTANCE.runInTransaction(new Runnable() {
+                @Override
+                public void run() {
+                    int courseId = (int) INSTANCE.courseDao().insertCourseAndGetId(course);
+
+                    List<Term> defaultTerms = Arrays.asList(
+                            new Term(courseId, "Prelims"),
+                            new Term(courseId, "Midterms"),
+                            new Term(courseId, "Finals")
+                    );
+                    courseDao().insertTerms(defaultTerms);
+                }
+            });
+        }
+    } // end of insertCourse
+
+    public void insertTask(final Task task) {
+        if (INSTANCE != null) {
+            INSTANCE.runInTransaction(new Runnable() {
+                @Override
+                public void run() {
+                    taskDao().insertTask(task);
+                }
+            });
+        }
+    } // end of insertTask
+} // end of AppDatabase

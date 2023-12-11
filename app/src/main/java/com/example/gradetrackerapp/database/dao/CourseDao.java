@@ -3,47 +3,36 @@ package com.example.gradetrackerapp.database.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
-import com.example.gradetrackerapp.data.course.Course;
-import com.example.gradetrackerapp.data.course.CourseWithCategories;
-import com.example.gradetrackerapp.data.term.Term;
+import com.example.gradetrackerapp.data.ref.Course;
+import com.example.gradetrackerapp.data.ref.Term;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Dao
 public interface CourseDao {
-    @Insert
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
-    default void insertCourse(Course course) {
-        int courseId = (int) insertCourseAndGetId(course);
+    void insertCourse(Course course);
 
-        // Insert default terms associated with the course
-        List<Term> defaultTerms = Arrays.asList(
-                new Term(courseId, "Prelims"),
-                new Term(courseId, "Midterms"),
-                new Term(courseId, "Finals")
-        );
-        for (Term term : defaultTerms) {
-            insertTerm(term);
-        }
-    }
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertCourseAndGetId(Course course);
 
-    @Insert
-    void insertTerm(Term term);
-
-    @Query("SELECT * FROM course_table WHERE courseId = :courseId")
+    @Query("SELECT * FROM courses WHERE courseId = :courseId")
     LiveData<Course> getCourseById(int courseId);
 
-    @Query("SELECT * FROM course_table")
+    @Query("SELECT * FROM courses")
     LiveData<List<Course>> getAllCourses();
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertTerms(List<Term> terms);
+
     @Transaction
-    @Query("SELECT * FROM course_table")
-    LiveData<List<CourseWithCategories>> getCoursesWithCategories();
+    @Query("SELECT * FROM terms WHERE courseId = :courseId")
+    LiveData<List<Term>> getTermsForCourse(int courseId);
 } // end of CourseDao interface

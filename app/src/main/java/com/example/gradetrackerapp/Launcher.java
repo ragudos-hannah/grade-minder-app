@@ -6,8 +6,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.gradetrackerapp.authentication.LoginActivity;
-import com.example.gradetrackerapp.authentication.RegisterActivity;
+import com.example.gradetrackerapp.activity.LoginActivity;
+import com.example.gradetrackerapp.activity.RegisterActivity;
 
 import java.io.File;
 

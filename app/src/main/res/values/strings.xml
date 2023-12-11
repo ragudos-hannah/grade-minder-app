@@ -11,4 +11,8 @@
     <string name="register_button">Register</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Item Fragment -->
+    <string name="class_standing_header">Class Standing</string>
+    <string name="add_task_button_text">add task</string>
 </resources>
