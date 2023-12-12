@@ -6,8 +6,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.example.gradetrackerapp.R;
 import com.example.gradetrackerapp.adapter.GradePagerAdapter;
+import com.example.gradetrackerapp.adapter.ZoomOutPageTransformer;
+import com.example.gradetrackerapp.callback.OnPageChangeCallback;
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Term;
 import com.example.gradetrackerapp.view_model.GradeViewModel;
@@ -16,6 +20,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.List;
 
 public class GradeActivity extends AppCompatActivity {
+    private ViewPager2 viewPager;
     private GradeViewModel gradeViewModel;
     private Course course;
 
@@ -38,11 +43,18 @@ public class GradeActivity extends AppCompatActivity {
             });
             gradeViewModel.getTerms(courseId).observe(this, this::setupViewPager);
 
+            /*
             // Add OnTabSelectedListener to handle tab click events
             TabLayout tabLayout = findViewById(R.id.viewPagerLBL);
-            ViewPager viewPager = findViewById(R.id.viewPager);
+            viewPager = findViewById(R.id.viewPager);
 
-            viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+            viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    tabLayout.setScrollPosition(position, 0, true);
+                }
+            });
 
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
@@ -60,12 +72,22 @@ public class GradeActivity extends AppCompatActivity {
                     // Handle tab reselected
                 }
             });
+
+             */
         }
     } // end of onCreate
 
     private void setupViewPager(List<Term> terms) {
-        ViewPager viewPager = findViewById(R.id.viewPager);
-        GradePagerAdapter gradePagerAdapter = new GradePagerAdapter(getSupportFragmentManager(), terms, course);
+        //TabLayout tabLayout = findViewById(R.id.viewPagerLBL);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        GradePagerAdapter gradePagerAdapter = new GradePagerAdapter(this, terms, course);
+        OnPageChangeCallback onPageChangeCallback = new OnPageChangeCallback(viewPager);
+
+        //tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.registerOnPageChangeCallback(onPageChangeCallback);
         viewPager.setAdapter(gradePagerAdapter);
-    }
+        viewPager.setPageTransformer(new ZoomOutPageTransformer());
+        onPageChangeCallback.setSwipeEnabled(true);
+    } // end of setupViewPager
 } // end of GradeActivity class

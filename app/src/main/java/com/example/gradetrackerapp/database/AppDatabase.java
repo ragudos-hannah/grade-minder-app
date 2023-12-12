@@ -28,9 +28,9 @@ public abstract class AppDatabase extends RoomDatabase {
     public static synchronized AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(
-                    context.getApplicationContext(),
-                    AppDatabase.class,
-                    "course-database")
+                            context.getApplicationContext(),
+                            AppDatabase.class,
+                            "course-database")
                     .fallbackToDestructiveMigration()
                     .build();
         }
@@ -39,16 +39,14 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public void insertCourse(final Course course) {
         if (INSTANCE != null) {
-            INSTANCE.runInTransaction(() -> {
-                int courseId = (int) INSTANCE.courseDao().insertCourseAndGetId(course);
+            int courseId = (int) INSTANCE.courseDao().insertCourseAndGetId(course);
 
-                List<Term> defaultTerms = Arrays.asList(
-                        new Term(courseId, "Prelims"),
-                        new Term(courseId, "Midterms"),
-                        new Term(courseId, "Finals")
-                );
-                courseDao().insertTerms(defaultTerms);
-            });
+            List<Term> defaultTerms = Arrays.asList(
+                    new Term(courseId, "Prelims"),
+                    new Term(courseId, "Midterms"),
+                    new Term(courseId, "Finals")
+            );
+            courseDao().insertTerms(defaultTerms);
         }
     } // end of insertCourse
 
@@ -63,4 +61,10 @@ public abstract class AppDatabase extends RoomDatabase {
             INSTANCE.runInTransaction(() -> taskDao().updateTask(task));
         }
     } // end of updateTask
+
+    public void updateTerm(final Term term) {
+        if (INSTANCE != null) {
+            INSTANCE.runInTransaction(() -> termDao().updateTerm(term));
+        }
+    } // end of updateTerm
 } // end of AppDatabase

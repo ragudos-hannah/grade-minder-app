@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+    private boolean isTermFinalized = false;
     private List<Task> tasks;
     private final LayoutInflater inflater;
     private OnItemClickListener<Task> listener;
@@ -50,6 +51,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public int getItemCount() {
         return tasks.size();
     } // end of getItemCount
+
+    public void setTermFinalized(boolean isFinalized) {
+        isTermFinalized = isFinalized;
+        notifyDataSetChanged();
+    } // end of setTermFinalized
 
     public void setOnItemClickListener(OnItemClickListener<Task> listener) {
         this.listener = listener;
@@ -89,14 +95,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
             deleteButton.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && deleteClickListener != null) {
+                if (position != RecyclerView.NO_POSITION && deleteClickListener != null && !isTermFinalized) {
                     deleteClickListener.onDeleteClick(tasks.get(position));
                 }
             });
 
             editButton.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && editClickListener != null) {
+                if (position != RecyclerView.NO_POSITION && editClickListener != null && !isTermFinalized) {
                     editClickListener.onEditClick(tasks.get(position));
                 }
             });

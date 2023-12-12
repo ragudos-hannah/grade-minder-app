@@ -3,13 +3,18 @@ package com.example.gradetrackerapp.fragment;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,10 +28,13 @@ import com.example.gradetrackerapp.data.ref.Term;
 import com.example.gradetrackerapp.database.AppDatabase;
 import com.example.gradetrackerapp.database.dao.TermDao;
 import com.example.gradetrackerapp.view_model.TaskViewModel;
+import com.example.gradetrackerapp.view_model.TermViewModel;
 
 import java.util.List;
 
 public class FinalsFragment extends Fragment {
+    private TaskAdapter taskAdapter;
+    private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
     private Term term;
     private Course course;
@@ -35,6 +43,37 @@ public class FinalsFragment extends Fragment {
         this.term = term;
         this.course = course;
     } // end of constructor
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    } // end of onCreate
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        RecyclerView recyclerView = getView().findViewById(R.id.taskRecyclerView);
+        if (recyclerView != null) {
+            taskAdapter = new TaskAdapter(requireContext());
+            taskAdapter.setOnDeleteClickListener(task -> taskViewModel.deleteTask(task));
+            taskAdapter.setOnEditClickListener(task -> showAddOrEditTaskDialog(task));
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            recyclerView.setAdapter(taskAdapter);
+        }
+
+        updateButtonStates(term.examDone);
+        taskAdapter.setTermFinalized(term.examDone);
+
+        // marks the checkbox if exam is already done
+        CheckBox examCheckbox = view.findViewById(R.id.examCheckbox);
+        examCheckbox.setChecked(term.examDone);
+
+        examCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            term.examDone = isChecked;
+            termViewModel.updateTerm(term);
+        }));
+    } // end of onViewCreated
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,11 +89,12 @@ public class FinalsFragment extends Fragment {
             }
         });
 
-        // initialize view model
+        // initialize view models
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
 
         // observe changes in the list of courses
-        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), this::updateRecyclerView);
+        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> taskAdapter.setTasks(tasks));
 
         // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
@@ -63,17 +103,19 @@ public class FinalsFragment extends Fragment {
         return view;
     } // end of onCreateView
 
-    private void updateRecyclerView(List<Task> tasks) {
-        TaskAdapter taskAdapter = new TaskAdapter(requireContext());
-        taskAdapter.setOnDeleteClickListener(task -> taskViewModel.deleteTask(task));
-        taskAdapter.setTasks(tasks);
+    private void updateButtonStates(boolean isChecked) {
+        Button addTaskButton = requireView().findViewById(R.id.addTaskButton);
+        EditText targetGradeEditText = requireView().findViewById(R.id.targetGradeEditText);
+        ImageButton solveButton = requireView().findViewById(R.id.solveButton);
+        EditText examScoreEditTask = requireView().findViewById(R.id.examScoreEditTask);
+        EditText examTotalScoreEditTask = requireView().findViewById(R.id.examTotalScoreEditTask);
 
-        taskAdapter.setOnEditClickListener(task -> showAddOrEditTaskDialog(task));
-
-        RecyclerView recyclerView = getView().findViewById(R.id.taskRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(taskAdapter);
-    } // end of updateRecyclerView
+        addTaskButton.setEnabled(!isChecked);
+        targetGradeEditText.setEnabled(!isChecked);
+        solveButton.setEnabled(!isChecked);
+        examScoreEditTask.setEnabled(!isChecked);
+        examTotalScoreEditTask.setEnabled(!isChecked);
+    } // end of updateButtonStates
 
     private void showAddOrEditTaskDialog(Task existingTask) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
