@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,19 +25,24 @@ import com.example.gradetrackerapp.adapter.TaskAdapter;
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Task;
 import com.example.gradetrackerapp.data.ref.Term;
+import com.example.gradetrackerapp.data.repository.TaskRepository;
 import com.example.gradetrackerapp.database.AppDatabase;
+import com.example.gradetrackerapp.database.dao.TaskDao;
 import com.example.gradetrackerapp.database.dao.TermDao;
+import com.example.gradetrackerapp.util.FeedbackGenerator;
 import com.example.gradetrackerapp.view_model.TaskViewModel;
 import com.example.gradetrackerapp.view_model.TermViewModel;
 
 import java.util.List;
 
 public class PrelimsFragment extends Fragment {
+    private FeedbackGenerator feedbackGenerator;
     private TaskAdapter taskAdapter;
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
-    private Term term;
+    private List<Task> tasks;
     private Course course;
+    private Term term;
 
     public PrelimsFragment(Term term, Course course) {
         this.term = term;
@@ -88,6 +94,12 @@ public class PrelimsFragment extends Fragment {
             }
         });
 
+        termDao.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> {
+            if (tasks != null) {
+                this.tasks = tasks;
+            }
+        });
+
         // initialize view models
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
@@ -98,6 +110,31 @@ public class PrelimsFragment extends Fragment {
         // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
+
+        // add an event when the solve button is pressed
+        Button solveButton = view.findViewById(R.id.solveButton);
+
+
+        // TO DO
+        /*
+        EditText targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
+        targetGradeEditText.
+
+        solveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText examScoreEditText = view.findViewById(R.id.examScoreEditTask);
+                EditText examTotalScoreEditText = view.findViewById(R.id.examTotalScoreEditTask);
+                TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
+                TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
+
+
+                feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView);
+            }
+        });
+
+         */
 
         return view;
     } // end of onCreateView
