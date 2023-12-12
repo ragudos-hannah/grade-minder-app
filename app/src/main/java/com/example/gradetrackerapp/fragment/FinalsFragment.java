@@ -7,10 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,17 +29,20 @@ import com.example.gradetrackerapp.data.ref.Task;
 import com.example.gradetrackerapp.data.ref.Term;
 import com.example.gradetrackerapp.database.AppDatabase;
 import com.example.gradetrackerapp.database.dao.TermDao;
+import com.example.gradetrackerapp.util.FeedbackGenerator;
 import com.example.gradetrackerapp.view_model.TaskViewModel;
 import com.example.gradetrackerapp.view_model.TermViewModel;
 
 import java.util.List;
 
 public class FinalsFragment extends Fragment {
+    private FeedbackGenerator feedbackGenerator;
     private TaskAdapter taskAdapter;
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
-    private Term term;
+    private List<Task> tasks;
     private Course course;
+    private Term term;
 
     public FinalsFragment(Term term, Course course) {
         this.term = term;
@@ -47,6 +52,7 @@ public class FinalsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        feedbackGenerator = new FeedbackGenerator();
     } // end of onCreate
 
     @Override
@@ -94,11 +100,46 @@ public class FinalsFragment extends Fragment {
         termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
 
         // observe changes in the list of courses
+        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> {
+            this.tasks = tasks;
+            taskAdapter.setTasks(tasks);
+        });
+
+        // observe changes in the list of courses
         taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> taskAdapter.setTasks(tasks));
 
         // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
+
+        // sets the initial text views as empty if termGrade is 0
+        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
+        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
+        if (term.termGrade == 0) {
+            termGradeTextView.setText("0");
+            feedbackTextView.setText("");
+        }
+
+        // add an option to update the target Grade if user changes it
+        EditText targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
+        targetGradeEditText.setText(String.valueOf(term.targetGrade));
+        targetGradeEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                updateTargetGrade(targetGradeEditText);
+                return true;
+            }
+            return false;
+        });
+
+        targetGradeEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                updateTargetGrade(targetGradeEditText);
+            }
+        });
+
+        // add an event when the solve button is pressed
+        ImageButton solveButton = view.findViewById(R.id.solveButton);
+        solveButton.setOnClickListener(v -> feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView));
 
         return view;
     } // end of onCreateView
@@ -116,6 +157,11 @@ public class FinalsFragment extends Fragment {
         examScoreEditTask.setEnabled(!isChecked);
         examTotalScoreEditTask.setEnabled(!isChecked);
     } // end of updateButtonStates
+
+    private void updateTargetGrade(EditText editText) {
+        term.targetGrade = Integer.parseInt(editText.getText().toString());
+        termViewModel.updateTerm(term);
+    } // end of updateTargetGrade
 
     private void showAddOrEditTaskDialog(Task existingTask) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());

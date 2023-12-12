@@ -43,7 +43,6 @@ public class GradeActivity extends AppCompatActivity {
             });
             gradeViewModel.getTerms(courseId).observe(this, this::setupViewPager);
 
-            /*
             // Add OnTabSelectedListener to handle tab click events
             TabLayout tabLayout = findViewById(R.id.viewPagerLBL);
             viewPager = findViewById(R.id.viewPager);
@@ -72,8 +71,6 @@ public class GradeActivity extends AppCompatActivity {
                     // Handle tab reselected
                 }
             });
-
-             */
         }
     } // end of onCreate
 

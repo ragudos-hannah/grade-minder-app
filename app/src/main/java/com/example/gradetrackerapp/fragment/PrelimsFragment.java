@@ -2,11 +2,14 @@ package com.example.gradetrackerapp.fragment;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -52,6 +55,7 @@ public class PrelimsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        feedbackGenerator = new FeedbackGenerator();
     } // end of onCreate
 
     @Override
@@ -94,47 +98,48 @@ public class PrelimsFragment extends Fragment {
             }
         });
 
-        termDao.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> {
-            if (tasks != null) {
-                this.tasks = tasks;
-            }
-        });
-
         // initialize view models
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
 
         // observe changes in the list of courses
-        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> taskAdapter.setTasks(tasks));
+        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> {
+            this.tasks = tasks;
+            taskAdapter.setTasks(tasks);
+        });
 
         // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
 
-        // add an event when the solve button is pressed
-        Button solveButton = view.findViewById(R.id.solveButton);
+        // sets the initial text views as empty if termGrade is 0
+        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
+        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
+        if (term.termGrade == 0) {
+            termGradeTextView.setText("0");
+            feedbackTextView.setText("");
+        }
 
-
-        // TO DO
-        /*
+        // add an option to update the target Grade if user changes it
         EditText targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
-        targetGradeEditText.
+        targetGradeEditText.setText(String.valueOf(term.targetGrade));
+        targetGradeEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                updateTargetGrade(targetGradeEditText);
+                return true;
+            }
+            return false;
+        });
 
-        solveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                EditText examScoreEditText = view.findViewById(R.id.examScoreEditTask);
-                EditText examTotalScoreEditText = view.findViewById(R.id.examTotalScoreEditTask);
-                TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
-                TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
-
-
-                feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView);
+        targetGradeEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                updateTargetGrade(targetGradeEditText);
             }
         });
 
-         */
+        // add an event when the solve button is pressed
+        ImageButton solveButton = view.findViewById(R.id.solveButton);
+        solveButton.setOnClickListener(v -> feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView));
 
         return view;
     } // end of onCreateView
@@ -152,6 +157,11 @@ public class PrelimsFragment extends Fragment {
         examScoreEditTask.setEnabled(!isChecked);
         examTotalScoreEditTask.setEnabled(!isChecked);
     } // end of updateButtonStates
+
+    private void updateTargetGrade(EditText editText) {
+        term.targetGrade = Integer.parseInt(editText.getText().toString());
+        termViewModel.updateTerm(term);
+    } // end of updateTargetGrade
 
     private void showAddOrEditTaskDialog(Task existingTask) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
