@@ -14,7 +14,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="@color/gray">
 
         <Toolbar
             android:layout_width="match_parent"
@@ -23,23 +24,76 @@
             android:elevation="4dp"
             android:background="@color/blue" />
 
-        <TextView
-            android:id="@+id/welcomeMessage"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/innerConstraintLayoutForHomepage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="300dp"
-            android:layout_marginBottom="10dp"
-            android:text="WELCOME"
-            android:textAlignment="center"
-            android:textSize="20sp" />
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_container_for_login">
 
-        <TextView
-            android:id="@+id/nameTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="NAME"
-            android:textAlignment="center"
-            android:textSize="20sp" />
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/BOOK_LIGHT" />
+
+            <TextView
+                android:id="@+id/welcomeMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to GradeMinder!"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView2" />
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="NAME"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textStyle="bold|italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/welcomeMessage" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="&quot;Through relentless dedication and unwavering commitment as a diligent student, one paves the path to success, where hard work becomes the catalyst for dreams realized and aspirations fulfilled.&quot;"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#40000000"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="@+id/nameTextView"
+                app:layout_constraintStart_toStartOf="@+id/nameTextView"
+                app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="© MixAndMatch"
+                android:textColor="#40000000"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textView5"
+                app:layout_constraintStart_toStartOf="@+id/textView5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
     <!-- Content in the navigation drawer -->
@@ -48,12 +102,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/navigation_header" >
+        android:visibility="gone"
+        app:headerLayout="@layout/navigation_header">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <!-- header layout -->
             <include
@@ -65,8 +120,8 @@
                 android:id="@+id/coursesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_below="@id/navigation_header"
                 android:layout_above="@id/addCourseButton"
+                android:layout_below="@id/navigation_header"
                 android:layout_weight="1"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp" />
