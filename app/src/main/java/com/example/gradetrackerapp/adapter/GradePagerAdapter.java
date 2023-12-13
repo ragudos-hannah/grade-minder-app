@@ -3,15 +3,11 @@ package com.example.gradetrackerapp.adapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Term;
-import com.example.gradetrackerapp.fragment.FinalsFragment;
-import com.example.gradetrackerapp.fragment.MidtermsFragment;
-import com.example.gradetrackerapp.fragment.PrelimsFragment;
+import com.example.gradetrackerapp.fragment.TermFragment;
 
 import java.util.List;
 
@@ -30,13 +26,13 @@ public class GradePagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new PrelimsFragment(terms.get(0), course);
+                return new TermFragment(terms.get(0), course);
             case 1:
-                return new MidtermsFragment(terms.get(1), course);
+                return new TermFragment(terms.get(1), course);
             case 2:
-                return new FinalsFragment(terms.get(2), course);
+                return new TermFragment(terms.get(2), course);
             case 3:
-                return new PrelimsFragment(terms.get(0), course);
+                return new TermFragment(terms.get(0), course);
             default:
                 throw new IllegalArgumentException("Invalid position");
         }
