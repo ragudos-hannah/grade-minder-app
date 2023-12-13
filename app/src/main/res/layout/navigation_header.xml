@@ -14,7 +14,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="10dp"
-        app:srcCompat="@drawable/PROFILE" />
+        app:srcCompat="@drawable/profile" />
 
     <TextView
         android:id="@+id/nameInformation"
