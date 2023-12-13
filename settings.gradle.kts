@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Grade Tracker App"
+rootProject.name = "GradeMinder"
 include(":app")
