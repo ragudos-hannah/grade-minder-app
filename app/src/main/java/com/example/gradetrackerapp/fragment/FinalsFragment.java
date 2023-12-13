@@ -53,6 +53,10 @@ public class FinalsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         feedbackGenerator = new FeedbackGenerator();
+
+        // initialize view models
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
     } // end of onCreate
 
     @Override
@@ -75,6 +79,14 @@ public class FinalsFragment extends Fragment {
         CheckBox examCheckbox = view.findViewById(R.id.examCheckbox);
         examCheckbox.setChecked(term.examDone);
 
+        // sets the initial text views as empty if termGrade is 0
+        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
+        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
+        if (term.termGrade == 0) {
+            termGradeTextView.setText("0");
+            feedbackTextView.setText("");
+        }
+
         examCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
             term.examDone = isChecked;
             termViewModel.updateTerm(term);
@@ -95,10 +107,6 @@ public class FinalsFragment extends Fragment {
             }
         });
 
-        // initialize view models
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-        termViewModel = new ViewModelProvider(this).get(TermViewModel.class);
-
         // observe changes in the list of courses
         taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> {
             this.tasks = tasks;
@@ -111,14 +119,6 @@ public class FinalsFragment extends Fragment {
         // add an event when the add task button is pressed
         Button addTaskButton = view.findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
-
-        // sets the initial text views as empty if termGrade is 0
-        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
-        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
-        if (term.termGrade == 0) {
-            termGradeTextView.setText("0");
-            feedbackTextView.setText("");
-        }
 
         // add an option to update the target Grade if user changes it
         EditText targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
@@ -139,6 +139,8 @@ public class FinalsFragment extends Fragment {
 
         // add an event when the solve button is pressed
         ImageButton solveButton = view.findViewById(R.id.solveButton);
+        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
+        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
         solveButton.setOnClickListener(v -> feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView));
 
         return view;
