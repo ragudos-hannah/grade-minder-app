@@ -3,7 +3,6 @@ package com.example.gradetrackerapp.fragment;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.gradetrackerapp.R;
 import com.example.gradetrackerapp.adapter.TaskAdapter;
 import com.example.gradetrackerapp.data.ref.Course;
@@ -35,16 +33,22 @@ import com.example.gradetrackerapp.view_model.TermViewModel;
 
 import java.util.List;
 
-public class FinalsFragment extends Fragment {
+public class TermFragment extends Fragment {
     private FeedbackGenerator feedbackGenerator;
     private TaskAdapter taskAdapter;
     private TermViewModel termViewModel;
     private TaskViewModel taskViewModel;
     private List<Task> tasks;
     private Course course;
-    private Term term;
+    private final Term term;
 
-    public FinalsFragment(Term term, Course course) {
+    /* instance variables for components */
+    TextView termGradeTextView, feedbackTextView;
+    EditText examScoreEditTask, examTotalScoreEditTask, targetGradeEditText;
+    Button addTaskButton;
+    ImageButton solveButton;
+
+    public TermFragment(Term term, Course course) {
         this.term = term;
         this.course = course;
     } // end of constructor
@@ -60,45 +64,17 @@ public class FinalsFragment extends Fragment {
     } // end of onCreate
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        RecyclerView recyclerView = getView().findViewById(R.id.taskRecyclerView);
-        if (recyclerView != null) {
-            taskAdapter = new TaskAdapter(requireContext());
-            taskAdapter.setOnDeleteClickListener(task -> taskViewModel.deleteTask(task));
-            taskAdapter.setOnEditClickListener(task -> showAddOrEditTaskDialog(task));
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recyclerView.setAdapter(taskAdapter);
-        }
-
-        updateButtonStates(term.examDone);
-        taskAdapter.setTermFinalized(term.examDone);
-
-        // marks the checkbox if exam is already done
-        CheckBox examCheckbox = view.findViewById(R.id.examCheckbox);
-        examCheckbox.setChecked(term.examDone);
-
-        // sets the initial text views as empty if termGrade is 0
-        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
-        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
-        if (term.termGrade == 0) {
-            termGradeTextView.setText("0");
-            feedbackTextView.setText("");
-        }
-
-        examCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            term.examDone = isChecked;
-            termViewModel.updateTerm(term);
-        }));
-    } // end of onViewCreated
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_term, container, false);
 
         AppDatabase appDatabase = AppDatabase.getInstance(getContext());
         TermDao termDao = appDatabase.termDao();
+
+        termGradeTextView = view.findViewById(R.id.termGradeTV);
+        feedbackTextView = view.findViewById(R.id.feedbackTV);
+        targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
+        examScoreEditTask = view.findViewById(R.id.examScoreEditTask);
+        examTotalScoreEditTask = view.findViewById(R.id.examTotalScoreEditTask);
 
         // acquire the course given the term ID
         termDao.getCourseForTerm(term.termId).observe(getViewLifecycleOwner(), course -> {
@@ -113,15 +89,11 @@ public class FinalsFragment extends Fragment {
             taskAdapter.setTasks(tasks);
         });
 
-        // observe changes in the list of courses
-        taskViewModel.getTasksForTerm(term.termId).observe(getViewLifecycleOwner(), tasks -> taskAdapter.setTasks(tasks));
-
         // add an event when the add task button is pressed
-        Button addTaskButton = view.findViewById(R.id.addTaskButton);
+        addTaskButton = view.findViewById(R.id.addTaskButton);
         addTaskButton.setOnClickListener(v -> showAddOrEditTaskDialog(null));
 
         // add an option to update the target Grade if user changes it
-        EditText targetGradeEditText = view.findViewById(R.id.targetGradeEditText);
         targetGradeEditText.setText(String.valueOf(term.targetGrade));
         targetGradeEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -138,21 +110,81 @@ public class FinalsFragment extends Fragment {
         });
 
         // add an event when the solve button is pressed
-        ImageButton solveButton = view.findViewById(R.id.solveButton);
-        TextView termGradeTextView = view.findViewById(R.id.termGradeTV);
-        TextView feedbackTextView = view.findViewById(R.id.feedbackTV);
+        solveButton = view.findViewById(R.id.solveButton);
+        termGradeTextView = view.findViewById(R.id.termGradeTV);
+        feedbackTextView = view.findViewById(R.id.feedbackTV);
         solveButton.setOnClickListener(v -> feedbackGenerator.generateFeedbackForBluePlayButton(course, term, tasks, termGradeTextView,feedbackTextView));
 
         return view;
     } // end of onCreateView
 
-    private void updateButtonStates(boolean isChecked) {
-        Button addTaskButton = requireView().findViewById(R.id.addTaskButton);
-        EditText targetGradeEditText = requireView().findViewById(R.id.targetGradeEditText);
-        ImageButton solveButton = requireView().findViewById(R.id.solveButton);
-        EditText examScoreEditTask = requireView().findViewById(R.id.examScoreEditTask);
-        EditText examTotalScoreEditTask = requireView().findViewById(R.id.examTotalScoreEditTask);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        RecyclerView recyclerView = requireView().findViewById(R.id.taskRecyclerView);
+        if (recyclerView != null) {
+            taskAdapter = new TaskAdapter(requireContext());
+            taskAdapter.setOnDeleteClickListener(task -> taskViewModel.deleteTask(task));
+            taskAdapter.setOnEditClickListener(this::showAddOrEditTaskDialog);
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            recyclerView.setAdapter(taskAdapter);
+        }
+
+        updateButtonStates(term.examDone);
+        taskAdapter.setTermFinalized(term.examDone);
+
+        // marks the checkbox if exam is already done
+        CheckBox examCheckbox = view.findViewById(R.id.examCheckbox);
+        examCheckbox.setChecked(term.examDone);
+
+        // sets the initial text views as empty if termGrade is 0
+        if (term.termGrade == 0) {
+            termGradeTextView.setText("0");
+            feedbackTextView.setText("");
+        } else {
+            String feedback = feedbackGenerator.getFeedbackFromCheckbox(term.targetGrade, term.termGrade);
+
+            examScoreEditTask.setText(String.valueOf(term.exam.score));
+            examTotalScoreEditTask.setText(String.valueOf(term.exam.totalScore));
+            termGradeTextView.setText(String.valueOf(term.termGrade));
+            feedbackTextView.setText(feedback);
+        }
+
+        examCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            term.examDone = isChecked;
+
+            if (term.examDone) {
+                String examScoreString = examScoreEditTask.getText().toString().trim();
+                String examTotalScoreString = examTotalScoreEditTask.getText().toString().trim();
+
+                if (!examScoreString.isEmpty() && !examTotalScoreString.isEmpty()) {
+                    int examScore = Integer.parseInt(examScoreEditTask.getText().toString());
+                    int examTotalScore = Integer.parseInt(examTotalScoreEditTask.getText().toString());
+
+                    if (examScore <= examTotalScore && examTotalScore != 0) {
+                        int termGrade = feedbackGenerator.generateFeedbackForCheckbox(course, term, examScore, examTotalScore, tasks, termGradeTextView, feedbackTextView);
+                        updateExamGrade(examScore, examTotalScore, termGrade);
+                    } else if (examScore > examTotalScore && examTotalScore != 0) {
+                        Toast.makeText(getContext(), "Invalid exam score, score should be equal or less than the total exam score", Toast.LENGTH_LONG).show();
+                        term.examDone = false;
+                        examCheckbox.setChecked(false);
+                    } else {
+                        Toast.makeText(getContext(), "Invalid total exam score. Score should be greater than zero", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "You need to add your exam score and it's corresponding total score first", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                term.exam.score = 100;
+                term.exam.totalScore = 100;
+                term.termGrade = 0;
+            }
+            termViewModel.updateTerm(term);
+        }));
+    } // end of onViewCreated
+
+    private void updateButtonStates(boolean isChecked) {
         addTaskButton.setEnabled(!isChecked);
         targetGradeEditText.setEnabled(!isChecked);
         solveButton.setEnabled(!isChecked);
@@ -161,9 +193,22 @@ public class FinalsFragment extends Fragment {
     } // end of updateButtonStates
 
     private void updateTargetGrade(EditText editText) {
-        term.targetGrade = Integer.parseInt(editText.getText().toString());
-        termViewModel.updateTerm(term);
+        int targetGrade = Integer.parseInt(editText.getText().toString());
+        if (targetGrade < 75 || targetGrade > 100) {
+            editText.setText(String.valueOf(term.targetGrade));
+            Toast.makeText(getContext(), "Target Grade Should be in the 75 - 100 range only", Toast.LENGTH_SHORT).show();
+        } else {
+            term.targetGrade = targetGrade;
+            termViewModel.updateTerm(term);
+        }
     } // end of updateTargetGrade
+
+    private void updateExamGrade(int examScore, int totalExamScore, int termGrade) {
+        term.exam.score = examScore;
+        term.exam.totalScore = totalExamScore;
+        term.termGrade = termGrade;
+        termViewModel.updateTerm(term);
+    } // end of updateExamGrade
 
     private void showAddOrEditTaskDialog(Task existingTask) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -214,4 +259,4 @@ public class FinalsFragment extends Fragment {
         });
         dialog.show();
     } // end of showTaskDialog
-} // end of FinalsFragment class
+} // end of PrelimsFragment class
