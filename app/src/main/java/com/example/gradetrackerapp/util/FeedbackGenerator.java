@@ -18,24 +18,17 @@ public class FeedbackGenerator {
         calculator = new GradeCalculator();
     }
 
-
-    public void generateFeedbackForCheckbox(Course course, Term term, List<Task> tasks, TextView predictedGradeTextView, TextView feedbackTextView) {
+    public int generateFeedbackForCheckbox(Course course, Term term, int examScore, int examTotalScore, List<Task> tasks, TextView predictedGradeTextView, TextView feedbackTextView) {
         int termTargetGrade = term.targetGrade;
-        int classStandingWeight = course.classStandingWeight;
-        int examWeight = course.examWeight;
 
-        int finalGradeForTheTerm = calculator.solvePredictedGradeFromCheckbox(course, term, tasks);
+        int finalGradeForTheTerm = calculator.solvePredictedGradeFromCheckbox(course, examScore, examTotalScore, tasks);
 
-        if (finalGradeForTheTerm < termTargetGrade) {
-            if (finalGradeForTheTerm >= 75) {
-                feedbackTextView.setText("Just fell short but hey! You passed the 75 mark!");
-            } else {
-                feedbackTextView.setText("Just fell short. Let's get it next time. I know you can do it!");
-            }
-        } else {
-            feedbackTextView.setText("Yeyyy! You passed this term! Keep up the good work!");
-        }
+        String feedback = getFeedbackFromCheckbox(termTargetGrade, finalGradeForTheTerm);
+
+        feedbackTextView.setText(feedback);
         predictedGradeTextView.setText(String.valueOf(finalGradeForTheTerm));
+
+        return finalGradeForTheTerm;
     } // end of generateFeedbackForCheckbox
 
     public void generateFeedbackForBluePlayButton(Course course, Term term, List<Task> tasks, TextView predictedGradeTextView, TextView feedbackTextView) {
@@ -52,4 +45,17 @@ public class FeedbackGenerator {
         }
         predictedGradeTextView.setText(String.valueOf(predictedGrade));
     } // end of generateFeedbackForBluePlayButton
+
+    public String getFeedbackFromCheckbox(int targetGrade, int termGrade) {
+        String feedback = "Yeyyy! You passed this term! Keep up the good work!";
+
+        if (termGrade < targetGrade) {
+            if (termGrade >= 75) {
+                feedback = "Just fell short but hey! You passed the 75 mark!";
+            } else {
+                feedback = "Just fell short. Let's get it next time. I know you can do it!";
+            }
+        }
+        return feedback;
+    } // end of getFeedbackFromCheckbox
 } // end of FeedbackGenerator class

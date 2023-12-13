@@ -27,7 +27,7 @@ public class GradeCalculator {
         return (int) Math.round(predictedGrade);
     } // end of solvePredictedGradeFromButton
 
-    protected int solvePredictedGradeFromCheckbox(Course course, Term term, List<Task> tasks) {
+    protected int solvePredictedGradeFromCheckbox(Course course, int examScoreInput, int examTotalScoreInput, List<Task> tasks) {
         int classStandingWeight = course.classStandingWeight;
         int examWeight = course.examWeight;
 
@@ -40,11 +40,8 @@ public class GradeCalculator {
         double newExamWeight = (double) examWeight / 100;
         double newClassStandingWeight = (double) classStandingWeight / 100;
 
-        double examScore = (double) term.exam.score;
-        double examTotalScore = (double) term.exam.totalScore;
-
         // FORMULA
-        double finalGradeForTerm = ((((userTotalScoreOnClassStanding / termTotalScoreOnClassStanding)) * 50 + 50) * newClassStandingWeight) + ((((examScore / examTotalScore)) * 50 + 50) * newExamWeight);
+        double finalGradeForTerm = ((((userTotalScoreOnClassStanding / termTotalScoreOnClassStanding)) * 50 + 50) * newClassStandingWeight) + (((((double) examScoreInput / (double) examTotalScoreInput)) * 50 + 50) * newExamWeight);
 
         return (int) Math.round(finalGradeForTerm);
     } // end of solvePredictedGradeFromCheckbox
