@@ -17,12 +17,13 @@
         android:orientation="vertical"
         android:background="@color/gray">
 
-        <Toolbar
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:id="@+id/toolbar"
             android:elevation="4dp"
-            android:background="@color/blue" />
+            android:background="@color/blue"
+            app:popupTheme="@style/Widget.AppCompat.Light.PopupMenu.Overflow"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/innerConstraintLayoutForHomepage"
@@ -102,7 +103,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:visibility="gone"
         app:headerLayout="@layout/navigation_header">
 
         <RelativeLayout
@@ -115,13 +115,20 @@
                 android:id="@+id/navigation_header"
                 layout="@layout/navigation_header" />
 
+            <View
+                android:id="@+id/yellowDivider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/yellow"
+                android:layout_below="@id/navigation_header"/>
+
             <!-- recycler view -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/coursesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_above="@id/addCourseButton"
-                android:layout_below="@id/navigation_header"
+                android:layout_below="@id/yellowDivider"
                 android:layout_weight="1"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp" />
