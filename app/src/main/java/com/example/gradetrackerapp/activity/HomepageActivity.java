@@ -1,16 +1,25 @@
 package com.example.gradetrackerapp.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +45,16 @@ public class HomepageActivity extends AppCompatActivity {
         // initialize view model
         homepageViewModel = new ViewModelProvider(this).get(HomepageViewModel.class);
 
+        // initialize the Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.navigation_drawer);
+        }
+
         // observe changes in the list of courses
         homepageViewModel.getCourses().observe(this, this::updateRecyclerView);
 
@@ -53,6 +72,16 @@ public class HomepageActivity extends AppCompatActivity {
         addCourseButton.setOnClickListener(v -> showAddCourseDialog());
     } // end of onCreate
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+            drawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void updateRecyclerView(List<Course> courses) {
         CourseAdapter courseAdapter = new CourseAdapter(getApplicationContext());
         courseAdapter.setCourses(courses);
@@ -62,6 +91,8 @@ public class HomepageActivity extends AppCompatActivity {
             intent.putExtra("courseId", course.courseId);
             startActivity(intent);
         });
+
+        courseAdapter.setOnEditClickListener(this::showCourseInfoDialog);
 
         RecyclerView recyclerView = findViewById(R.id.coursesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -105,6 +136,55 @@ public class HomepageActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     } // end of showAddCourseDialog
+
+    private void showCourseInfoDialog(Course existingCourse) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_course, null);
+
+        builder.setView(dialogView);
+
+        EditText courseNameEditText = dialogView.findViewById(R.id.courseNameEditText);
+        EditText courseCodeEditText = dialogView.findViewById(R.id.courseCodeEditText);
+        EditText courseInstructorEditText = dialogView.findViewById(R.id.courseInstructorEditText);
+        Button editButton = dialogView.findViewById(R.id.editCourseButton);
+        Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+        ImageButton deleteButton = dialogView.findViewById(R.id.deleteCourseButton);
+
+        if (existingCourse != null) {
+            courseNameEditText.setText(existingCourse.courseName);
+            courseCodeEditText.setText(existingCourse.courseCode);
+            courseInstructorEditText.setText(existingCourse.courseInstructor);
+        }
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+
+        editButton.setOnClickListener(view -> {
+            String courseName = courseNameEditText.getText().toString().trim();
+            String courseCode = courseCodeEditText.getText().toString().trim();
+            String courseInstructor = courseInstructorEditText.getText().toString().trim();
+
+            if (!TextUtils.isEmpty(courseName) && !TextUtils.isEmpty(courseCode) && !TextUtils.isEmpty(courseInstructor)) {
+                existingCourse.courseName = courseName;
+                existingCourse.courseCode = courseCode;
+                existingCourse.courseInstructor = courseInstructor;
+
+                homepageViewModel.updateCourse(existingCourse);
+            } else {
+                Toast.makeText(this, "Invalid input. Unable to edit course", Toast.LENGTH_SHORT).show();
+            }
+            dialog.dismiss();
+        });
+
+        deleteButton.setOnClickListener(view -> {
+            homepageViewModel.deleteCourse(existingCourse);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    } // end of showCourseInfoDialog
 
     private String readInfo() {
         File file = new File(getFilesDir(), "register_data/data.txt");

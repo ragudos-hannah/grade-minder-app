@@ -2,6 +2,8 @@ package com.example.gradetrackerapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -42,6 +44,11 @@ public class GradeActivity extends AppCompatActivity {
                 String courseName = course.courseName;
                 courseHeading.setText(courseName);
 
+                ImageButton button = findViewById(R.id.editCategoryBTN);
+                button.setOnClickListener(v -> {
+                    showEditCourseDialog();
+                });
+
                 gradePagerAdapter.setCourse(course);
             });
 
@@ -79,4 +86,8 @@ public class GradeActivity extends AppCompatActivity {
             });
         }
     } // end of onCreate
+
+    private void showEditCourseDialog() {
+
+    }
 } // end of GradeActivity class

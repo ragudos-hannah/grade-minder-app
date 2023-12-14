@@ -19,9 +19,6 @@ public class Course {
     public int classStandingWeight;
     public int targetGrade;
 
-    //@Relation(parentColumn = "courseId", entityColumn = "courseId")
-    //public List<Term> terms;
-
     public Course() {
         courseGrade = 0;
         examWeight = 50;

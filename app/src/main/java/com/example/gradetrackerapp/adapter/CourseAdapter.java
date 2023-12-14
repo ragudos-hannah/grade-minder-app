@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.gradetrackerapp.R;
+import com.example.gradetrackerapp.callback.OnEditClickListener;
 import com.example.gradetrackerapp.callback.OnItemClickListener;
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Task;
@@ -19,6 +21,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     private List<Course> courses;
     private final LayoutInflater inflater;
     private OnItemClickListener<Course> listener;
+    private OnEditClickListener<Course> editClickListener;
 
     public CourseAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -52,16 +55,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         this.listener = listener;
     } // end of setOnItemClickListener
 
+    public void setOnEditClickListener(OnEditClickListener<Course> listener) {
+        this.editClickListener = listener;
+    } // end of setOnEditClickListener
+
     class CourseViewHolder extends RecyclerView.ViewHolder {
         private final TextView courseNameTextView;
         private final TextView courseCodeTextView;
         private final TextView courseInstructorTextView;
+        private ImageView courseInfo;
 
         CourseViewHolder(@NonNull View itemView, OnItemClickListener<Course> listener) {
             super(itemView);
             courseNameTextView = itemView.findViewById(R.id.courseNameTextView);
             courseCodeTextView = itemView.findViewById(R.id.courseCodeTextView);
             courseInstructorTextView = itemView.findViewById(R.id.courseInstructorTextView);
+            courseInfo = itemView.findViewById(R.id.courseInfoButton);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
@@ -69,6 +78,13 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                     if (position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(courses.get(position));
                     }
+                }
+            });
+
+            courseInfo.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && editClickListener != null) {
+                    editClickListener.onEditClick(courses.get(position));
                 }
             });
         } // end of constructor

@@ -24,6 +24,10 @@ public class CourseRepository {
         new InsertCourseAsyncTask(courseDao, application).execute(course);
     } // end of insertCourse
 
+    public void deleteCourse(Course course) {
+        new DeleteCourseAsyncTask(courseDao).execute(course);
+    } // end of deleteCourse
+
     public void updateCourse(Course course, Application application) {
         new UpdateCourseAsyncTask(courseDao, application).execute(course);
     } // end of updateCourse
@@ -54,8 +58,29 @@ public class CourseRepository {
             AppDatabase.getInstance(application).insertCourse(courses[0]);
 
             return null;
-        }
+        } // end of doInBackground
     } // end of InsertCourseAsyncTask class
+
+    private static class DeleteCourseAsyncTask extends AsyncTask<Course, Void, Void> {
+        private CourseDao courseDao;
+
+        private DeleteCourseAsyncTask(CourseDao courseDao) {
+            this.courseDao = courseDao;
+        } // end of constructor
+
+        @Override
+        protected Void doInBackground(Course... courses) {
+            int courseId = courses[0].courseId;
+
+            courseDao.deleteTasksFromCourse(courseId);
+
+            courseDao.deleteTermsForCourse(courseId);
+
+            courseDao.deleteCourse(courseId);
+
+            return null;
+        } // end of doInBackground
+    } // end of DeleteCourseAsyncTask class
 
     private static class UpdateCourseAsyncTask extends AsyncTask<Course, Void, Void> {
         private CourseDao courseDao;

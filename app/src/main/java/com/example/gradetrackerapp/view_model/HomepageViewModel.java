@@ -27,4 +27,13 @@ public class HomepageViewModel extends AndroidViewModel {
     public void insertCourse(Course course) {
         courseRepository.insertCourse(course, getApplication());
     } // end of insertCourse
+
+
+    public void deleteCourse(Course course) {
+        courseRepository.deleteCourse(course);
+    } // end of deleteCourse
+
+    public void updateCourse(Course course) {
+        courseRepository.updateCourse(course, getApplication());
+    } // end of updateCourse
 } // end of HomepageViewModel class

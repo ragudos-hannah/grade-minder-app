@@ -3,6 +3,7 @@ package com.example.gradetrackerapp.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +39,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
             }
         });
 
-        Button removeButton = findViewById(R.id.removeButton);
+        TextView removeButton = findViewById(R.id.removeButton);
         removeButton.setOnClickListener(v -> {
             removeDataFile();
             proceedToLogin = false;

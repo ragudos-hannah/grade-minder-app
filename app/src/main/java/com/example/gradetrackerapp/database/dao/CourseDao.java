@@ -2,6 +2,7 @@ package com.example.gradetrackerapp.database.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,6 +21,16 @@ public interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
     void insertCourse(Course course);
+
+    @Transaction
+    @Query("DELETE FROM courses WHERE courseId = :courseId")
+    void deleteCourse(int courseId);
+
+    @Query("DELETE FROM terms WHERE courseId = :courseId")
+    void deleteTermsForCourse(int courseId);
+
+    @Query("DELETE FROM tasks WHERE termId IN (SELECT termId FROM terms WHERE courseId = :courseId)")
+    void deleteTasksFromCourse(int courseId);
 
     @Update
     void updateCourse(Course course);

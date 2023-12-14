@@ -5,7 +5,10 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.Query;
+import androidx.room.Relation;
 import androidx.room.Transaction;
+
+import java.util.List;
 
 @Entity(tableName = "terms")
 public class Term {
@@ -21,9 +24,6 @@ public class Term {
 
     @Embedded
     public Exam exam = new Exam();
-
-    //@Relation(parentColumn = "termId", entityColumn = "termId")
-    //public List<Task> tasks;
 
     public Term(int courseId, String termName) {
         this.courseId = courseId;
