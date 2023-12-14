@@ -13,10 +13,12 @@ import com.example.gradetrackerapp.authentication.BiometricHelper;
 import java.io.File;
 
 public class LoginActivity extends AppCompatActivity implements BiometricHelper.BiometricCallback {
+    private static final int AUTHENTICATION_REQUEST_CODE = 123;
     private boolean proceedToLogin = true;
     private int invalidAttemptCount = 0;
     private static final int maxInvalidAttempts = 5;
     private BiometricHelper biometricHelper;
+    private BiometricHelper.BiometricCallback biometricCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
         setContentView(R.layout.activity_login);
 
         biometricHelper = new BiometricHelper(this, this);
+        biometricCallback = this;
 
         Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(v -> {
@@ -43,8 +46,22 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
     } // end of onCreate
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTHENTICATION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // User successfully authenticated with device password
+                biometricCallback.onBiometricAuthenticationSucceeded();
+            } else {
+                // Authentication failed or user canceled
+                biometricCallback.onBiometricAuthenticationFailed("Password authentication failed.");
+            }
+        }
+    } // end of onActivityResult
+
+    @Override
     public void onBiometricAuthenticationSucceeded() {
-        showToast("Biometric authentication succeeded.");
         proceed();
     } // end of onBiometricAuthenticationSucceeded
 

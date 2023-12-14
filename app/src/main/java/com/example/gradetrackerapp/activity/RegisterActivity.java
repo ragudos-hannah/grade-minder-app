@@ -15,9 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements BiometricHelper.BiometricCallback {
+    private static final int AUTHENTICATION_REQUEST_CODE = 123;
     private int invalidAttemptCount = 0;
     private static final int maxInvalidAttempts = 5;
     private BiometricHelper biometricHelper;
+    private BiometricHelper.BiometricCallback biometricCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +27,28 @@ public class RegisterActivity extends AppCompatActivity implements BiometricHelp
         setContentView(R.layout.activity_registration);
 
         biometricHelper = new BiometricHelper(this, this);
+        biometricCallback = this;
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(v -> {
             biometricHelper.initiateBiometricAuthentication();
         });
     } // end of onCreate
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTHENTICATION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // User successfully authenticated with device password
+                biometricCallback.onBiometricAuthenticationSucceeded();
+            } else {
+                // Authentication failed or user canceled
+                biometricCallback.onBiometricAuthenticationFailed("Password authentication failed.");
+            }
+        }
+    } // end of onActivityResult
 
     @Override
     public void onBiometricAuthenticationSucceeded() {

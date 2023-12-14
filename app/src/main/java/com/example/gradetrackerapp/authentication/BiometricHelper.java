@@ -1,6 +1,10 @@
 package com.example.gradetrackerapp.authentication;
 
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -12,13 +16,15 @@ import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import java.security.Key;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class BiometricHelper {
+    private static final int AUTHENTICATION_REQUEST_CODE = 123;
     private boolean authenticationFailed = false;
     private final Context context;
-    private final BiometricCallback biometricCallback;
+    private BiometricCallback biometricCallback;
     private final Handler mainHandler;
 
     public BiometricHelper(Context context, BiometricCallback biometricCallback) {
@@ -36,7 +42,11 @@ public class BiometricHelper {
                 break;
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
-                biometricCallback.onBiometricAuthenticationFailed("Biometric not enrolled.");
+                if (isDeviceSecure()) {
+                    showPasswordAuthentication();
+                } else {
+                    biometricCallback.onBiometricAuthenticationFailed("Biometric not enrolled, and device is not secure.");
+                }
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
             case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
@@ -46,6 +56,14 @@ public class BiometricHelper {
                 break;
         }
     } // end of initiateBiometricAuthentication
+
+    private boolean isDeviceSecure() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            return keyguardManager != null && keyguardManager.isDeviceSecure();
+        }
+        return false;
+    } // end of isDeviceSecure
 
     private void showBiometricPrompt() {
         Executor executor = Executors.newSingleThreadExecutor();
@@ -80,6 +98,19 @@ public class BiometricHelper {
 
         biometricPrompt.authenticate(promptInfo);
     } // end of showBiometricPrompt
+
+    private void showPasswordAuthentication() {
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+
+        if (keyguardManager != null && keyguardManager.isKeyguardSecure()) {
+            Intent authIntent = keyguardManager.createConfirmDeviceCredentialIntent("Authenticate", "Confirm your device password");
+            if (authIntent != null) {
+                ((Activity) context).startActivityForResult(authIntent, AUTHENTICATION_REQUEST_CODE);
+            }
+        } else {
+            showToast("Device is not secure, unable to use device password.");
+        }
+    }
 
     private void showToastOnMainThread(final String message) {
         mainHandler.post(() -> showToast(message));
