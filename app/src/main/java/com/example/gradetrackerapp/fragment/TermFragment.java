@@ -152,9 +152,7 @@ public class TermFragment extends Fragment {
         }
 
         examCheckbox.setOnCheckedChangeListener(((buttonView, isChecked) -> {
-            term.examDone = isChecked;
-
-            if (term.examDone) {
+            if (isChecked) {
                 String examScoreString = examScoreEditTask.getText().toString().trim();
                 String examTotalScoreString = examTotalScoreEditTask.getText().toString().trim();
 
@@ -165,20 +163,24 @@ public class TermFragment extends Fragment {
                     if (examScore <= examTotalScore && examTotalScore != 0) {
                         int termGrade = feedbackGenerator.generateFeedbackForCheckbox(course, term, examScore, examTotalScore, tasks, termGradeTextView, feedbackTextView);
                         updateExamGrade(examScore, examTotalScore, termGrade);
+                        term.examDone = true;
                     } else if (examScore > examTotalScore && examTotalScore != 0) {
                         Toast.makeText(getContext(), "Invalid exam score, score should be equal or less than the total exam score", Toast.LENGTH_LONG).show();
                         term.examDone = false;
                         examCheckbox.setChecked(false);
                     } else {
                         Toast.makeText(getContext(), "Invalid total exam score. Score should be greater than zero", Toast.LENGTH_LONG).show();
+                        examCheckbox.setChecked(false);
                     }
                 } else {
                     Toast.makeText(getContext(), "You need to add your exam score and it's corresponding total score first", Toast.LENGTH_LONG).show();
+                    examCheckbox.setChecked(false);
                 }
             } else {
                 term.exam.score = 100;
                 term.exam.totalScore = 100;
                 term.termGrade = 0;
+                term.examDone = false;
             }
             termViewModel.updateTerm(term);
         }));
@@ -196,7 +198,7 @@ public class TermFragment extends Fragment {
         int targetGrade = Integer.parseInt(editText.getText().toString());
         if (targetGrade < 75 || targetGrade > 100) {
             editText.setText(String.valueOf(term.targetGrade));
-            Toast.makeText(getContext(), "Target Grade Should be in the 75 - 100 range only", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Target Grade should be in the 75 - 100 range only", Toast.LENGTH_SHORT).show();
         } else {
             term.targetGrade = targetGrade;
             termViewModel.updateTerm(term);

@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Term;
+import com.example.gradetrackerapp.fragment.OverallFragment;
 import com.example.gradetrackerapp.fragment.TermFragment;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class GradePagerAdapter extends FragmentStateAdapter {
             case 2:
                 return new TermFragment(terms.get(2), course);
             case 3:
-                return new TermFragment(terms.get(0), course);
+                return new OverallFragment(course);
             default:
                 throw new IllegalArgumentException("Invalid position");
         }

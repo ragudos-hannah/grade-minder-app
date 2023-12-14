@@ -56,6 +56,12 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     } // end of insertTask
 
+    public void updateCourse(final Course course) {
+        if (INSTANCE != null) {
+            INSTANCE.runInTransaction(() -> courseDao().updateCourse(course));
+        }
+    } // end of updateCourse
+
     public void updateTask(final Task task) {
         if (INSTANCE != null) {
             INSTANCE.runInTransaction(() -> taskDao().updateTask(task));

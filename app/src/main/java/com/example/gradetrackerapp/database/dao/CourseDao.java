@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Term;
@@ -19,6 +20,9 @@ public interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Transaction
     void insertCourse(Course course);
+
+    @Update
+    void updateCourse(Course course);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertCourseAndGetId(Course course);

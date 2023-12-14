@@ -17,6 +17,7 @@ public class Course {
     public int courseGrade;
     public int examWeight;
     public int classStandingWeight;
+    public int targetGrade;
 
     //@Relation(parentColumn = "courseId", entityColumn = "courseId")
     //public List<Term> terms;
@@ -25,5 +26,6 @@ public class Course {
         courseGrade = 0;
         examWeight = 50;
         classStandingWeight = 50;
+        targetGrade = 75;
     } // end of constructor
 } // end of Course class
