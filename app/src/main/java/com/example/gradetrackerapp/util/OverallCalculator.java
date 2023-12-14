@@ -3,6 +3,7 @@ package com.example.gradetrackerapp.util;
 import android.app.Application;
 import android.widget.TextView;
 
+import com.example.gradetrackerapp.activity.GradeActivity;
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.data.ref.Term;
 import com.example.gradetrackerapp.data.repository.CourseRepository;
@@ -92,6 +93,10 @@ public class OverallCalculator {
         }
 
         else {
+            prelimsTV.setText("?");
+            midtermsTV.setText("?");
+            finalsTV.setText("?");
+            finalsFinalsTV.setText("");
             feedbackTV.setText("Error. previous terms should be finished before the later terms");
         }
     } // end of calculateOverall

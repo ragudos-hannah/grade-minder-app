@@ -164,6 +164,7 @@ public class TermFragment extends Fragment {
                         int termGrade = feedbackGenerator.generateFeedbackForCheckbox(course, term, examScore, examTotalScore, tasks, termGradeTextView, feedbackTextView);
                         updateExamGrade(examScore, examTotalScore, termGrade);
                         term.examDone = true;
+                        updateButtonStates(true);
                     } else if (examScore > examTotalScore && examTotalScore != 0) {
                         Toast.makeText(getContext(), "Invalid exam score, score should be equal or less than the total exam score", Toast.LENGTH_LONG).show();
                         term.examDone = false;
@@ -181,6 +182,7 @@ public class TermFragment extends Fragment {
                 term.exam.totalScore = 100;
                 term.termGrade = 0;
                 term.examDone = false;
+                updateButtonStates(false);
             }
             termViewModel.updateTerm(term);
         }));

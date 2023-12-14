@@ -22,6 +22,16 @@ public class GradePagerAdapter extends FragmentStateAdapter {
         this.course = course;
     } // end of constructor
 
+    public void setTerms(List<Term> terms) {
+        this.terms = terms;
+        notifyDataSetChanged();
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {

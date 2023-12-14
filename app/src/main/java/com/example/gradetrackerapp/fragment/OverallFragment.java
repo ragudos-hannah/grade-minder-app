@@ -1,10 +1,13 @@
 package com.example.gradetrackerapp.fragment;
 
+import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +29,7 @@ public class OverallFragment extends Fragment {
     private CourseRepository courseRepository;
     private OverallCalculator calculator;
     private List<Term> terms;
-    private Course course;
+    private final Course course;
 
     /* Components */
     private TextView prelimsGradeTV, midtermsGradeTV, finalsGradeTV, finalsFinalGradeTV, feedbackTV;
@@ -60,6 +63,7 @@ public class OverallFragment extends Fragment {
         finalsFinalGradeET.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 updateTargetGrade(finalsFinalGradeET);
+                calculateOverall();
                 return true;
             }
             return false;
@@ -68,6 +72,7 @@ public class OverallFragment extends Fragment {
         finalsFinalGradeET.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 updateTargetGrade(finalsFinalGradeET);
+                calculateOverall();
             }
         });
 
@@ -78,12 +83,10 @@ public class OverallFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (course != null) {
-            courseRepository.getTermsForCourse(course.courseId).observe(getViewLifecycleOwner(), terms -> {
-                this.terms = terms;
-                calculateOverall();
-            });
-        }
+        courseRepository.getTermsForCourse(course.courseId).observe(getViewLifecycleOwner(), terms -> {
+            this.terms = terms;
+            calculateOverall();
+        });
     } // end of onViewCreated
 
     private void updateTargetGrade(EditText editText) {
