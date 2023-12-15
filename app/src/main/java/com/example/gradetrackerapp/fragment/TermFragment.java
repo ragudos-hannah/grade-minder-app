@@ -1,6 +1,8 @@
 package com.example.gradetrackerapp.fragment;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ import com.example.gradetrackerapp.database.dao.TermDao;
 import com.example.gradetrackerapp.util.FeedbackGenerator;
 import com.example.gradetrackerapp.view_model.TaskViewModel;
 import com.example.gradetrackerapp.view_model.TermViewModel;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -222,8 +225,8 @@ public class TermFragment extends Fragment {
         EditText taskNameET = dialogView.findViewById(R.id.taskNameET);
         EditText scoreET = dialogView.findViewById(R.id.scoreET);
         EditText totalScoreET = dialogView.findViewById(R.id.totalScoreET);
-        Button cancelBTN = dialogView.findViewById(R.id.cancelBTN);
-        Button checkBTN = dialogView.findViewById(R.id.checkBTN);
+        MaterialButton cancelBTN = dialogView.findViewById(R.id.cancelButton);
+        MaterialButton checkBTN = dialogView.findViewById(R.id.checkTaskButton);
 
         if (existingTask != null) {
             taskNameET.setText(existingTask.taskName);
@@ -234,6 +237,7 @@ public class TermFragment extends Fragment {
         AlertDialog dialog = builder.create();
 
         cancelBTN.setOnClickListener(view -> dialog.dismiss());
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         checkBTN.setOnClickListener(view -> {
             String taskName = taskNameET.getText().toString().trim();
@@ -241,20 +245,24 @@ public class TermFragment extends Fragment {
             int totalScore = Integer.parseInt(totalScoreET.getText().toString().trim());
 
             if (!TextUtils.isEmpty(taskName) && !TextUtils.isEmpty(String.valueOf(score)) && !TextUtils.isEmpty(String.valueOf(totalScore))) {
-                Task newTask = new Task();
-                newTask.taskName = taskName;
-                newTask.score = score;
-                newTask.totalScore = totalScore;
+                if (score < totalScore) {
+                    Task newTask = new Task();
+                    newTask.taskName = taskName;
+                    newTask.score = score;
+                    newTask.totalScore = totalScore;
 
-                // set the term id for the new task
-                newTask.termId = term.termId;
+                    // set the term id for the new task
+                    newTask.termId = term.termId;
 
-                // Insert the new task using the ViewModel
-                if (existingTask != null) {
-                    newTask.taskId = existingTask.taskId;
-                    taskViewModel.updateTask(newTask);
+                    // Insert the new task using the ViewModel
+                    if (existingTask != null) {
+                        newTask.taskId = existingTask.taskId;
+                        taskViewModel.updateTask(newTask);
+                    } else {
+                        taskViewModel.insertTask(newTask);
+                    }
                 } else {
-                    taskViewModel.insertTask(newTask);
+                    Toast.makeText(getContext(), "Total score should be greater than or equal to your score", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(getContext(), "Invalid input. Task not added.", Toast.LENGTH_SHORT).show();

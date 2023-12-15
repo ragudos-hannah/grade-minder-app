@@ -50,7 +50,7 @@ public class OverallFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_overall, container, false);
+        View view = inflater.inflate(R.layout.fragment_overall_version3, container, false);
 
         prelimsGradeTV = view.findViewById(R.id.prelimsGradeTV);
         midtermsGradeTV = view.findViewById(R.id.midtermsGradeTV);

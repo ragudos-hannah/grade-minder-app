@@ -37,23 +37,23 @@ public class FeedbackGenerator {
         int predictedGrade = calculator.solvePredictedGradeFromButton(course.classStandingWeight, course.examWeight, tasks);
 
         if (scoreRequired <= 0) {
-            feedbackTextView.setText("Congratulations! You can expect that you can pass this term!");
+            feedbackTextView.setText("Congratulations! Seems like you can pass it!");
         } else if (scoreRequired > term.exam.score) {
-            feedbackTextView.setText("I am sorry, target grade is too high to reach. You might want to edit it?");
+            feedbackTextView.setText("Sorry, target Grade is not possible to reach.");
         } else {
-            feedbackTextView.setText("You need at least " + scoreRequired + " to pass your target term grade if the exam is over " + term.exam.totalScore + ".");
+            feedbackTextView.setText("You need at least " + scoreRequired + " points if the exam is over " + term.exam.totalScore + ".");
         }
         predictedGradeTextView.setText(String.valueOf(predictedGrade));
     } // end of generateFeedbackForBluePlayButton
 
     public String getFeedbackFromCheckbox(int targetGrade, int termGrade) {
-        String feedback = "Yeyyy! You passed this term! Keep up the good work!";
+        String feedback = "You passed this term! Keep it up!";
 
         if (termGrade < targetGrade) {
             if (termGrade >= 75) {
-                feedback = "Just fell short but hey! You passed the 75 mark!";
+                feedback = "Failed to reach target grade but you passed the 75 mark!";
             } else {
-                feedback = "Just fell short. Let's get it next time. I know you can do it!";
+                feedback = "You failed this term. ";
             }
         }
         return feedback;

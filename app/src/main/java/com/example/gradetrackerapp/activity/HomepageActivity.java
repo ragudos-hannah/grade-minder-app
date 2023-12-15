@@ -103,20 +103,24 @@ public class HomepageActivity extends AppCompatActivity {
 
     private void showAddCourseDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_course, null);
 
-        builder.setTitle("Add Course")
-                .setMessage("Supply the following information");
+        builder.setView(dialogView);
 
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_course, null);
-        builder.setView(view);
+        EditText courseNameInput = dialogView.findViewById(R.id.courseNameInput);
+        EditText courseCodeInput = dialogView.findViewById(R.id.courseCodeInput);
+        EditText professorInput = dialogView.findViewById(R.id.courseInstructorInput);
+        MaterialButton addButton = dialogView.findViewById(R.id.addCourseButton);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.cancelButton);
 
-        EditText courseCodeInput = view.findViewById(R.id.courseCodeInput);
-        EditText courseNameInput = view.findViewById(R.id.courseNameInput);
-        EditText professorInput = view.findViewById(R.id.professorInput);
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        builder.setPositiveButton("Add", (dialogInterface, id) -> {
-            String courseCode = courseCodeInput.getText().toString().trim();
+        cancelButton.setOnClickListener(view -> dialog.dismiss());
+
+        addButton.setOnClickListener(view -> {
             String courseName = courseNameInput.getText().toString().trim();
+            String courseCode = courseCodeInput.getText().toString().trim();
             String courseInstructor = professorInput.getText().toString().trim();
 
             if (!TextUtils.isEmpty(courseCode) && !TextUtils.isEmpty(courseName) && !TextUtils.isEmpty(courseInstructor)) {
@@ -130,12 +134,8 @@ public class HomepageActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(HomepageActivity.this, "Invalid input. Course not added.", Toast.LENGTH_SHORT).show();
             }
-            dialogInterface.dismiss();
+            dialog.dismiss();
         });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
         dialog.show();
     } // end of showAddCourseDialog
 
