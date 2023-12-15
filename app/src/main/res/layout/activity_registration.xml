@@ -1,60 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="35dp"
-    android:background="@color/snow_white">
+    android:background="@color/blue">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/innerConstraintLayoutForHomepage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/register_heading"
-        android:textSize="30sp"
-        android:textAlignment="center" />
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_container_for_login"
+        android:padding="20dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/nameTextInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:startIconDrawable="@drawable/username_icon"
-        app:helperText="Required*"
-        app:helperTextTextColor="@color/bright_red" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameTextInputEditText"
+        <TextView
+            android:id="@+id/registerLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name" >
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="@string/register_heading"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textAlignment="center" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/surnameTextInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:startIconDrawable="@drawable/username_icon"
-        app:helperText="Required*"
-        app:helperTextTextColor="@color/bright_red" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/surnameTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginTop="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Surname" >
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
+            app:startIconDrawable="@drawable/username_icon"
+            app:helperText="Required*"
+            app:helperTextTextColor="@color/bright_red"
+            app:boxBackgroundColor="@color/yellow"
+            app:boxStrokeColor="@color/blue"
+            android:layout_below="@id/registerLabel">
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/register_button"
-        android:padding="10dp"
-        android:background="@drawable/round_corner_button" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name" >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/surnameTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:startIconDrawable="@drawable/username_icon"
+            app:helperText="Required*"
+            app:helperTextTextColor="@color/bright_red"
+            app:boxBackgroundColor="@color/yellow"
+            app:boxStrokeColor="@color/blue"
+            android:layout_below="@id/nameTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/surnameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Surname" >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/register_button"
+            android:padding="10dp"
+            android:background="@drawable/round_corner_button"
+            android:layout_below="@id/surnameTextInputLayout" />
+
+    </RelativeLayout>
 </LinearLayout>
