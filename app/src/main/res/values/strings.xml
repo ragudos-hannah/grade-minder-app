@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Grade Tracker App</string>
+    <string name="app_name">Grade Minder</string>
 
     <!-- Login Activity -->
     <string name="login_heading">Login</string>
