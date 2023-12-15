@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/yellow"
         android:paddingTop="10dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -102,6 +103,12 @@
                 android:background="@drawable/edit_categories_button_with_image" />
         </RelativeLayout>
     </LinearLayout>
+
+    <View
+        android:id="@+id/blueBarrier"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/blue" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/viewPagerTabs"

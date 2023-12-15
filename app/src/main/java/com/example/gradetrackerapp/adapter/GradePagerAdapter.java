@@ -1,6 +1,7 @@
 package com.example.gradetrackerapp.adapter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -55,4 +56,20 @@ public class GradePagerAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return 4;
     } // end of getCount
+
+    @Nullable
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "PRELIMS";
+            case 1:
+                return "MIDTERMS";
+            case 2:
+                return "FINALS";
+            case 3:
+                return "OVERALL";
+            default:
+                return null;
+        }
+    }
 } // end of GradePagerAdapter class
