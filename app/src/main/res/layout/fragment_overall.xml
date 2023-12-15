@@ -1,186 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp" >
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/headerConstraint"
+    <View
+        android:id="@+id/blueBarrier"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blue"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="4dp"
+        android:background="@color/blue" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="TARGET FINAL GRADE:"
-            android:textColor="@color/gray"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/targetFinalFinalGradeET"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/target_grade_border"
-            android:ems="2"
-            android:inputType="number"
-            android:maxEms="2"
-            android:text="75"
-            android:textAlignment="center"
-            android:textColor="@color/gray"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/contentConstraint"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray"
-        android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@id/headerConstraint"
-        tools:layout_editor_absoluteX="10dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/yellow"
+        android:padding="20dp">
 
-        <TextView
-            android:id="@+id/prelimsLBL"
-            android:layout_width="wrap_content"
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="PRELIMS GRADE:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/midtermsLBL"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@color/blue"
+            android:padding="8dp" >
 
-        <TextView
-            android:id="@+id/midtermsLBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="40dp"
-            android:text="MIDTERMS GRADE:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/prelimsLBL" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TARGET COURSE GRADE:"
+                android:textColor="@color/snow_white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_alignParentStart="true" />
 
-        <TextView
-            android:id="@+id/finalsLBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="FINALS GRADE:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/midtermsLBL"
-            app:layout_constraintTop_toBottomOf="@id/midtermsLBL" />
+            <EditText
+                android:id="@+id/targetFinalFinalGradeET"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/target_grade_border"
+                android:ems="2"
+                android:inputType="number"
+                android:maxEms="2"
+                android:text="75"
+                android:textAlignment="center"
+                android:textColor="@color/snow_white"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_alignEnd="@id/textView2"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/finalFinalLBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:padding="10dp"
-            android:text="FINAL FINAL GRADE:"
-            android:textColor="@color/blue"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/finalsLBL"
-            app:layout_constraintTop_toBottomOf="@+id/finalsLBL"
-            tools:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/prelimsGradeTV"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="90dp"
-            android:background="@drawable/exam_scores_border"
-            android:padding="10dp"
-            android:text="99"
-            android:minEms="2"
-            android:maxEms="3"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/prelimsLBL"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/prelimsLBL" />
+            android:background="@color/snow_white"
+            android:paddingBottom="25dp">
 
-        <TextView
-            android:id="@+id/midtermsGradeTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="90dp"
-            android:background="@drawable/exam_scores_border"
-            android:padding="10dp"
-            android:minEms="2"
-            android:maxEms="3"
-            android:text="99"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/midtermsLBL"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/midtermsLBL" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_centerInParent="true" >
 
-        <TextView
-            android:id="@+id/finalsGradeTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="90dp"
-            android:background="@drawable/exam_scores_border"
-            android:padding="10dp"
-            android:text="99"
-            android:minEms="2"
-            android:maxEms="3"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/finalsLBL"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/finalsLBL" />
+                <!-- Prelims -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/finalsFinalGradeTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="90dp"
-            android:background="@drawable/final_final_grade_border"
-            android:padding="10dp"
-            android:hint=""
-            android:minEms="2"
-            android:maxEms="3"
-            android:textSize="16sp"
-            android:textColor="@color/blue"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/finalFinalLBL"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/finalFinalLBL" />
+                    <TextView
+                        android:id="@+id/prelimsLBL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PRELIMS GRADE:"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/overallFeedbackTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/exam_scores_border"
-            android:padding="10dp"
-            android:text="you need atleast 63 for midterms and finals to match your target grade"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/finalFinalLBL" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/prelimsGradeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="55dp"
+                        android:background="@drawable/exam_scores_border"
+                        android:maxEms="3"
+                        android:minEms="2"
+                        android:padding="10dp"
+                        android:text="99"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Midterms -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="45dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="end" >
+
+                    <TextView
+                        android:id="@+id/midtermsLBL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MIDTERMS GRADE:"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/midtermsGradeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/exam_scores_border"
+                        android:padding="10dp"
+                        android:text="99"
+                        android:minEms="2"
+                        android:maxEms="3"
+                        android:layout_marginStart="55dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- finals -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="45dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="end" >
+
+                    <TextView
+                        android:id="@+id/finalsLBL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FINALS GRADE:"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/finalsGradeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/exam_scores_border"
+                        android:padding="10dp"
+                        android:text="99"
+                        android:minEms="2"
+                        android:maxEms="3"
+                        android:layout_marginStart="55dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Course Grade -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="45dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="end" >
+
+                    <TextView
+                        android:id="@+id/finalFinalLBL"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="COURSE GRADE:"
+                        android:textSize="16sp"
+                        android:textColor="@color/blue"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/finalsFinalGradeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/exam_scores_border"
+                        android:padding="10dp"
+                        android:minEms="2"
+                        android:maxEms="3"
+                        android:layout_marginStart="55dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/blue"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/overallFeedbackTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/exam_scores_border"
+                android:padding="10dp"
+                android:text="you need atleast 63 for midterms and finals to match your target grade"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold|italic"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
