@@ -27,6 +27,8 @@ import com.example.gradetrackerapp.R;
 import com.example.gradetrackerapp.adapter.CourseAdapter;
 import com.example.gradetrackerapp.data.ref.Course;
 import com.example.gradetrackerapp.view_model.HomepageViewModel;
+import com.google.android.material.button.MaterialButton;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,7 +70,7 @@ public class HomepageActivity extends AppCompatActivity {
         nameInformationTextView.setText(name);
 
         // add an event for the addCourseButton
-        Button addCourseButton = findViewById(R.id.addCourseButton);
+        MaterialButton addCourseButton = findViewById(R.id.addCourseButton);
         addCourseButton.setOnClickListener(v -> showAddCourseDialog());
     } // end of onCreate
 
@@ -146,8 +148,8 @@ public class HomepageActivity extends AppCompatActivity {
         EditText courseNameEditText = dialogView.findViewById(R.id.courseNameEditText);
         EditText courseCodeEditText = dialogView.findViewById(R.id.courseCodeEditText);
         EditText courseInstructorEditText = dialogView.findViewById(R.id.courseInstructorEditText);
-        Button editButton = dialogView.findViewById(R.id.editCourseButton);
-        Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+        MaterialButton editButton = dialogView.findViewById(R.id.editCourseButton);
+        MaterialButton cancelButton = dialogView.findViewById(R.id.cancelButton);
         ImageButton deleteButton = dialogView.findViewById(R.id.deleteCourseButton);
 
         if (existingCourse != null) {

@@ -3,140 +3,112 @@
     android:id="@+id/fragment_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/categoriesWeightConstraintLayout"
+    <!-- HEADING -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp" >
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp">
 
         <TextView
-            android:id="@+id/category1LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            android:text="Category 1"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/weightCategory1LBL"
-            app:layout_constraintTop_toBottomOf="@+id/courseLBL" />
-
-        <TextView
-            android:id="@+id/category2LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="30dp"
-            android:text="Category 2"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/weightCategory2LBL"
-            app:layout_constraintTop_toBottomOf="@id/category1LBL" />
-
-        <TextView
-            android:id="@+id/category3LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            android:text="Category 3"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/weightCategory3LBL"
-            app:layout_constraintTop_toBottomOf="@id/courseLBL" />
-
-        <TextView
-            android:id="@+id/category4LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="30dp"
-            android:text="Category 4"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/weightCategory4LBL"
-            app:layout_constraintTop_toBottomOf="@id/category3LBL" />
-
-        <TextView
-            android:id="@+id/courseLBL"
-            android:layout_width="wrap_content"
+            android:id="@+id/courseLabel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="COURSE NAME"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/weightCategory1LBL"
-            android:layout_width="wrap_content"
+        <!-- WEIGHTS -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="50dp"
-            android:text="50%"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/category3LBL"
-            app:layout_constraintTop_toBottomOf="@+id/courseLBL" />
+            android:layout_marginTop="10dp" >
 
-        <TextView
-            android:id="@+id/weightCategory2LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="50dp"
-            android:text="50%"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/category4LBL"
-            app:layout_constraintTop_toBottomOf="@+id/weightCategory1LBL" />
+            <!-- Center this to the screen -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_centerInParent="true">
 
-        <TextView
-            android:id="@+id/weightCategory3LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:text="null"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/editCategoryBTN"
-            app:layout_constraintTop_toBottomOf="@+id/courseLBL" />
+                <!-- Class Standing -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:gravity="end">
 
-        <TextView
-            android:id="@+id/weightCategory4LBL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
-            android:text="null"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@+id/editCategoryBTN"
-            app:layout_constraintTop_toBottomOf="@+id/weightCategory3LBL" />
+                    <TextView
+                        android:id="@+id/classStandingLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Class Standing:"
+                        android:textSize="16sp"
+                        android:textStyle="italic" />
 
-        <ImageButton
-            android:id="@+id/editCategoryBTN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/edit_categories_button_with_image"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/courseLBL" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/classStandingWeightLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50%"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="15dp" />
+                </LinearLayout>
+
+                <!-- Examination -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+
+                    <TextView
+                        android:id="@+id/examinationLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Examination:"
+                        android:textSize="16sp"
+                        android:textStyle="italic" />
+
+                    <TextView
+                        android:id="@+id/examinationWeightLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50%"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="15dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Edit Button -->
+            <ImageButton
+                android:id="@+id/editCourseWeightButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/edit_categories_button_with_image" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/viewPagerLBL"
+        android:id="@+id/viewPagerTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/categoriesWeightConstraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tabMode="fixed"
+        app:tabMode="auto"
+        app:tabGravity="fill"
         app:tabSelectedTextColor="@color/blue" >
 
         <com.google.android.material.tabs.TabItem
@@ -159,10 +131,4 @@
             android:layout_height="wrap_content"
             android:text="OVERALL" />
     </com.google.android.material.tabs.TabLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </androidx.viewpager2.widget.ViewPager2>
 </LinearLayout>

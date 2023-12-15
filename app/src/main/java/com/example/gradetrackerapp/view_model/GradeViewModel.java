@@ -27,4 +27,8 @@ public class GradeViewModel extends AndroidViewModel {
     public LiveData<Course> getCourseById(int courseId) {
         return courseRepository.getCourseById(courseId);
     } // end of getCourseById
+
+    public void updateCourse(Course course) {
+        courseRepository.updateCourse(course, getApplication());
+    } // end of updateCourse
 } // end of GradeViewModel
