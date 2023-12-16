@@ -59,6 +59,10 @@ public class RegisterActivity extends AppCompatActivity implements BiometricHelp
     } // end of onBiometricAuthenticationSucceeded
 
     @Override
+    public void onBiometricAuthenticationForDeletionSucceeded() {
+    } // end of onBiometricAuthenticationForDeletionSucceeded
+
+    @Override
     public void onBiometricAuthenticationFailed(String message) {
         showToast(message);
         if (invalidAttemptCount >= maxInvalidAttempts) {

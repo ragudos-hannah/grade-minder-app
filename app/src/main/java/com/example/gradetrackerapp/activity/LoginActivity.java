@@ -15,6 +15,7 @@ import java.io.File;
 
 public class LoginActivity extends AppCompatActivity implements BiometricHelper.BiometricCallback {
     private static final int AUTHENTICATION_REQUEST_CODE = 123;
+    private static final int AUTHENTICATION_REQUEST_DELETION_CODE = 321;
     private boolean proceedToLogin = true;
     private int invalidAttemptCount = 0;
     private static final int maxInvalidAttempts = 5;
@@ -41,8 +42,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
 
         TextView removeButton = findViewById(R.id.removeButton);
         removeButton.setOnClickListener(v -> {
-            removeDataFile();
-            proceedToLogin = false;
+            biometricHelper.initiateAuthenticationForDeletion();
         });
     } // end of onCreate
 
@@ -59,12 +59,25 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
                 biometricCallback.onBiometricAuthenticationFailed("Password authentication failed.");
             }
         }
+
+        if (requestCode == AUTHENTICATION_REQUEST_DELETION_CODE) {
+            if (resultCode == RESULT_OK) {
+                biometricCallback.onBiometricAuthenticationForDeletionSucceeded();
+            } else {
+                biometricCallback.onBiometricAuthenticationFailed("Password authentication failed.");
+            }
+        }
     } // end of onActivityResult
 
     @Override
     public void onBiometricAuthenticationSucceeded() {
         proceed();
     } // end of onBiometricAuthenticationSucceeded
+
+    @Override
+    public void onBiometricAuthenticationForDeletionSucceeded() {
+        wipeData();
+    } // end of onBiometricAuthenticationForDeletionSucceeded
 
     @Override
     public void onBiometricAuthenticationFailed(String message) {
@@ -82,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
         startActivity(proceedIntent);
     } // end of proceed
 
-    private void removeDataFile() {
+    private void wipeData() {
         File file = new File(getFilesDir(), "register_data/data.txt");
 
         if (file.delete()) {
@@ -97,6 +110,7 @@ public class LoginActivity extends AppCompatActivity implements BiometricHelper.
         } else {
             showToast("Failed to remove database file");
         }
+        proceedToLogin = false;
     } // end of removeDateFile
 
     private void showToast(String message) {
